@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="RIS数据中心风险洞察系统HA维护手册浙江齐治科技股份有限公司[TOC] 声明 版权所有 © 浙江齐治科技股份有限公司 2021。 保留一切权利。非经本公司书面许可，任何单位和个人不得擅自摘抄、复制本文档内容的部分或全部，并不得以任何形式传播。商标声明是浙江齐治科技股份有限公司的商标或注册商标。本文档提及的其他所有商标或注册商标，由各自的所有人拥有。注意您购买的产品、服务或特性等应受浙江齐治科技股">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mojinhui33">
+<meta property="og:url" content="http://yoursite.com/2022/04/09/HA%E7%BB%B4%E6%8A%A4%E6%89%8B%E5%86%8C/index.html">
+<meta property="og:site_name" content="mojinhui33">
+<meta property="og:description" content="RIS数据中心风险洞察系统HA维护手册浙江齐治科技股份有限公司[TOC] 声明 版权所有 © 浙江齐治科技股份有限公司 2021。 保留一切权利。非经本公司书面许可，任何单位和个人不得擅自摘抄、复制本文档内容的部分或全部，并不得以任何形式传播。商标声明是浙江齐治科技股份有限公司的商标或注册商标。本文档提及的其他所有商标或注册商标，由各自的所有人拥有。注意您购买的产品、服务或特性等应受浙江齐治科技股">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-04-09T04:52:15.094Z">
+<meta property="article:modified_time" content="2022-04-09T06:00:42.058Z">
+<meta property="article:author" content="Marlboro">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2022/04/09/HA%E7%BB%B4%E6%8A%A4%E6%89%8B%E5%86%8C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | mojinhui33</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">mojinhui33</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/04/09/HA%E7%BB%B4%E6%8A%A4%E6%89%8B%E5%86%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/tom.jpg">
+      <meta itemprop="name" content="Marlboro">
+      <meta itemprop="description" content="公无渡河">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="mojinhui33">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-04-09 12:52:15 / 修改时间：14:00:42" itemprop="dateCreated datePublished" datetime="2022-04-09T12:52:15+08:00">2022-04-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="RIS数据中心风险洞察系统"><a href="#RIS数据中心风险洞察系统" class="headerlink" title="RIS数据中心风险洞察系统"></a><center><strong>RIS数据中心风险洞察系统</strong></center></h2><h2 id="HA维护手册"><a href="#HA维护手册" class="headerlink" title="HA维护手册"></a><center><strong>HA维护手册</strong></center></h2><h3 id="浙江齐治科技股份有限公司"><a href="#浙江齐治科技股份有限公司" class="headerlink" title="浙江齐治科技股份有限公司"></a><center><strong>浙江齐治科技股份有限公司</strong></center></h3><p>[TOC]</p>
+<h3 id="声明"><a href="#声明" class="headerlink" title="声明"></a><strong>声明</strong></h3><blockquote>
+<p>版权所有 © 浙江齐治科技股份有限公司 2021。 保留一切权利。<br>非经本公司书面许可，任何单位和个人不得擅自摘抄、复制本文档内容的部分或全部，并不得以任何形式传播。<br>商标声明<br>是浙江齐治科技股份有限公司的商标或注册商标。<br>本文档提及的其他所有商标或注册商标，由各自的所有人拥有。<br>注意<br>您购买的产品、服务或特性等应受浙江齐治科技股份有限公司商业合同和条款的约束，本文档中描述的全部或部分产<br>品、服务或特性可能不在您的购买或使用范围之内。除非合同另有约定，浙江齐治科技股份有限公司对本文档内容不做<br>任何明示或默示的声明或保证。<br>由于产品版本升级或其他原因，本文档内容会不定期进行更新。除非另有约定，本文档仅作为使用指导，本文档中的所<br>有陈述、信息和建议不构成任何明示或暗示的担保。</p>
+</blockquote>
+<h3 id="HA机制"><a href="#HA机制" class="headerlink" title="HA机制"></a><strong>HA机制</strong></h3><p>HA（High Availability），意指高可用性集群。主要是为了防止单点故障时造成的服务不可用故障，从而提升RIS的可用<br>性。HA由两台RIS组成双机热备，使用虚IP对外提供服务。两台设备中只有一台对外提供服务，另外一台从节点则会同<br>步主节点的数据，并在主节点发生故障时自动或手动切换主节点。</p>
+<p>HA的部署请参考《RIS安装部署指南》中的配置HA章节。</p>
+<p>部署完HA后，主备节点的shterm用户将会添加双向信任，同时数据加密文件sk.dat将变为一致。</p>
+<p>HA将启动一个shterm2-ha服务托管PostgreSQL服务，当shterm2-ha服务停止时，将会停止PostgreSQL数据库服务。</p>
+<p>HA进行资产访问、数据同步、心跳检测的示意图如下：</p>
+<h5 id="资产"><a href="#资产" class="headerlink" title="资产"></a>资产</h5><h5 id="用户"><a href="#用户" class="headerlink" title="用户"></a>用户</h5><h5 id="资产访问"><a href="#资产访问" class="headerlink" title="资产访问"></a>资产访问</h5><h5 id="数据同步"><a href="#数据同步" class="headerlink" title="数据同步"></a>数据同步</h5><h5 id="心跳同步"><a href="#心跳同步" class="headerlink" title="心跳同步"></a>心跳同步</h5><h4 id="RIS（主）"><a href="#RIS（主）" class="headerlink" title="RIS（主）"></a>RIS（主）</h4><h4 id="RIS（备）"><a href="#RIS（备）" class="headerlink" title="RIS（备）"></a>RIS（备）</h4><h5 id="交换机"><a href="#交换机" class="headerlink" title="交换机"></a>交换机</h5><h5 id="资产1-资产"><a href="#资产1-资产" class="headerlink" title="资产1 资产"></a>资产1 资产</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">业务网口</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">业务网口</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">心跳网口</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">心跳网口</span><br></pre></td></tr></table></figure>
+<h5 id="数据同步-1"><a href="#数据同步-1" class="headerlink" title="数据同步"></a>数据同步</h5><h5 id="HA的主节点会将数据不断同步给从节点，以保证两个节点之间的数据一致性。"><a href="#HA的主节点会将数据不断同步给从节点，以保证两个节点之间的数据一致性。" class="headerlink" title="HA的主节点会将数据不断同步给从节点，以保证两个节点之间的数据一致性。"></a>HA的主节点会将数据不断同步给从节点，以保证两个节点之间的数据一致性。</h5><p>HA同步的数据包括配置数据（PostgreSQL数据库）、用户文件（用户自定义上传的脚本和传输的文<br>件）、ElasticSearch审计记录和审计回放文件。HA同步的数据类型和同步方式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">数据类型 同步方式</span><br><span class="line">配置数据 PostgreSQL流复制，实时同步。同步周期为每秒。</span><br></pre></td></tr></table></figure>
+<h4 id="1"><a href="#1" class="headerlink" title="1"></a>1</h4><h5 id="数据类型-同步方式"><a href="#数据类型-同步方式" class="headerlink" title="数据类型 同步方式"></a>数据类型 同步方式</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ElasticSearch审计记</span><br><span class="line">录</span><br></pre></td></tr></table></figure>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ES增量备份，增量同步，定期产生增量的snapshot复制到从节点并导入。同步周期默认为</span><br><span class="line">为每<span class="number">1440</span>分钟（<span class="number">1</span>天），可以通过<span class="regexp">/etc/</span>shterm/haconfig的 es_interval 参数设置。同步的增</span><br><span class="line">量snapshot文件目录为<span class="regexp">/var/</span>shtermdata<span class="regexp">/share/</span>es_backup/。</span><br><span class="line">用户文件 由shterm-common服务进行同步，增量同步。同步的内容为<span class="regexp">/var/</span>shtermdata<span class="regexp">/share/</span></span><br><span class="line">shterm<span class="regexp">/，不包含account、conf、filetranfer/</span>temp和lic目录。</span><br><span class="line">主节点每过一段时间检查文件是否有变更，并生成增量文件。检查周期默认为<span class="number">60</span>秒，可以通</span><br><span class="line">过shterm.conf文件（<span class="regexp">/etc/</span>shterm/shterm.conf）的 common.fileChkInternal 参数设置。</span><br><span class="line">从节点每过一段时间检查主节点文件是否有变更，有变更则进行增量同步。同步周期默认</span><br><span class="line">为<span class="number">30</span>秒，可以通过shterm.conf文件的 common.fileSyncChkInternal 参数设置。</span><br><span class="line">审计回放文件 由shterm-common服务进行同步，增量同步。对<span class="regexp">/var/</span>shtermdata<span class="regexp">/share/</span>shterm<span class="regexp">/sesslog/</span>文</span><br><span class="line">件进行同步。</span><br><span class="line">同步方式和相关参数与用户文件的同步完全相同。</span><br><span class="line">时间 由Chronyd服务进行时间同步。在备机的配置文件（<span class="regexp">/etc/</span>shterm/chrony.conf）中会将NTP服</span><br><span class="line">务器配置为主机的地址。</span><br></pre></td></tr></table></figure>
+<p>HA备节点出现电源故障或关机期间，如果主节点设置或修改端口、SNMP、X.509等配置信息，当备节点电源恢复且与主<br>节点正常通信后，一般需要15~20分钟的时间完成数据同步。</p>
+<p><strong>自动切换</strong></p>
+<p>HA部署的RIS会进行以下两种检测，从而发现主节点的故障，并在主节点故障时立即将服务切换到从节点，使从节点成<br>为新的主节点。</p>
+<ul>
+<li><strong>网络故障检测</strong> ：从节点每2秒ping主节点检查主节点是否可达。若主节点连续3次不可达，并且ping检测地址（一般配<br>  置为网关地址）可达，则自动接管服务。心跳检测时间间隔可以在/etc/shterm/haconfig的 <strong>heartbeat_interval</strong> 参<br>  数中设置。</li>
+<li><strong>主节点服务检测</strong> ：shterm2-ha服务监控主节点的以下服务的状态。<ul>
+<li>elasticsearch</li>
+<li>rabbitmq-server</li>
+<li>redis</li>
+<li>shterm-agentmgr</li>
+<li>shterm-common</li>
+<li>shterm-dbaudit-mssql</li>
+</ul>
+</li>
+</ul>
+<h4 id="HA机制-2"><a href="#HA机制-2" class="headerlink" title="HA机制 2"></a>HA机制 2</h4><ul>
+<li>shterm-dbaudit-mysql</li>
+<li>shterm-dbaudit-oracle</li>
+<li>shterm-guisessmgr</li>
+<li>shterm-rdpextsrv</li>
+<li>shterm-text</li>
+<li>shterm2-arm</li>
+<li>xinetd</li>
+<li>xrdp</li>
+<li>nginx</li>
+<li>tomcat<br>每10秒检查一次，当这些服务状态不正常时会尝试重启。当连续10次启动不成功时会认为发生了故障并<br>向从节点发起主从切换请求，Tomcat会在启动120秒后再进行检查。检查时间间隔，可以在/etc/shterm/<br>haconfig的 <strong>check_interval</strong> 参数中修改；连续启动不成功的次数上限，可以在该文件的 <strong>fail_count</strong> 参数中修改。</li>
+</ul>
+<p>当HA未进行自动切换时，管理员也可以手动执行主从切换。</p>
+<h4 id="HA机制-3"><a href="#HA机制-3" class="headerlink" title="HA机制 3"></a>HA机制 3</h4><p><strong>验证HA状态</strong></p>
+<h1 id="2"><a href="#2" class="headerlink" title="2"></a>2</h1><p>管理员可以在Web界面的 <strong>部署管理</strong> 和 <strong>系统状态</strong> 界面了解HA的基本状态信息。如需更全面查看HA状态，需要在后台查<br>看HA的进程、数据库、配置文件、心跳等状态。</p>
+<p><strong>1.</strong> 使用超级管理员账号通过虚IP登录RIS的Web界面。<br><strong>2.</strong> 在 <strong>系统设置系统部署管理</strong> 菜单中，单击 <strong>集群管理</strong> ，查看集群状态。</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">可以查看HA的虚<span class="built_in">IP</span>、以及各节点的主机名、<span class="built_in">IP</span>地址状态。主机名后面带“ （主） ”的即为HA的主节点、虚<span class="built_in">IP</span>所在节</span><br><span class="line">点。</span><br></pre></td></tr></table></figure>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">如果HA节点因负载过高不能承载会话时，将在Web界面最上方显示告警提示 节点“***”负载过高，请尽快处理 ，直</span><br><span class="line">到该节点能够重新承载会话。</span><br><span class="line">如果主机/备机的<span class="built_in">ES</span>健康状态为red或者拒绝访问时，将在Web界面最上方显示告警提示 节点<span class="string">&quot;***&quot;</span>上的<span class="built_in">ES</span>存在故</span><br><span class="line">障，请尽快修复。 。</span><br></pre></td></tr></table></figure>
+<p><strong>3.</strong> 在 <strong>系统设置</strong> &gt; <strong>系统</strong> &gt; <strong>系统状态</strong> 菜单，查看HA各节点的系统状态。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HA状态下可以通过切换页签查看各节点的系统状态。系统状态中将显示HA是否进入维护模式。管理员可以通过该界</span><br><span class="line">面展示的资源占用情况判断HA是否存在故障和风险。</span><br></pre></td></tr></table></figure>
+<h4 id="4"><a href="#4" class="headerlink" title="4"></a>4</h4><h5 id="说明-HA进程状态中，需要检查以下进程的状态是否正常，如果进程不存在或者状态为D或者Z的需要注意。"><a href="#说明-HA进程状态中，需要检查以下进程的状态是否正常，如果进程不存在或者状态为D或者Z的需要注意。" class="headerlink" title="说明: HA进程状态中，需要检查以下进程的状态是否正常，如果进程不存在或者状态为D或者Z的需要注意。"></a>说明: HA进程状态中，需要检查以下进程的状态是否正常，如果进程不存在或者状态为D或者Z的需要注意。</h5><ul>
+<li>elasticsearch</li>
+<li>redis</li>
+<li>xinetd</li>
+<li>xrdp</li>
+<li>tomcat</li>
+<li>nginx</li>
+<li>common</li>
+<li>guisessmgr</li>
+<li>rdpextsrv</li>
+<li>text</li>
+<li>arm</li>
+<li>agentmgr</li>
+<li>dbaudit-mssql</li>
+<li>dbaudit-mysql</li>
+<li>dbaudit-oracle</li>
+<li>ha<br>当备节点的服务出现故障或系统负载过高时，仅会在主节点的Web界面上方显示红色的告警信息，不会发<br>送syslog日志告警和邮件告警信息。</li>
+</ul>
+<h4 id="验证HA状态-5"><a href="#验证HA状态-5" class="headerlink" title="验证HA状态 5"></a>验证HA状态 5</h4><h5 id="说明-以上所有进程均可以在后台命令行中查看，可以执行以下命令进行检查："><a href="#说明-以上所有进程均可以在后台命令行中查看，可以执行以下命令进行检查：" class="headerlink" title="说明: 以上所有进程均可以在后台命令行中查看，可以执行以下命令进行检查："></a>说明: 以上所有进程均可以在后台命令行中查看，可以执行以下命令进行检查：</h5><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl is-active <span class="keyword">shterm2-ha </span>elasticsearch redis xinetd xrdp tomcat nginx <span class="keyword">shterm-common</span></span><br><span class="line"><span class="keyword">shterm-guisessmgr </span><span class="keyword">shterm-rdpextsrv </span><span class="keyword">shterm-text </span><span class="keyword">shterm2-arm </span><span class="keyword">shterm-agentmgr </span><span class="keyword">shterm-dbaudit-*</span></span><br><span class="line"><span class="keyword">当所有结果均为active时表示正常。</span></span><br></pre></td></tr></table></figure>
+<p><strong>4.</strong> 检查数据库服务状态。</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">a) 执行以下命令检查数据库服务状态，正常情况下为inactive：</span><br><span class="line">systemctl status postgresql<span class="number">-9.</span></span><br><span class="line">b) 执行以下命令检查PostgreSQL是否开机启动，正常情况下都为disabled：</span><br><span class="line">systemctl <span class="keyword">is</span>-enabled postgresql<span class="number">-9.</span></span><br><span class="line">说明: HA场景下，PostgreSQL通过脚本调用，不通过systemd管理，因此systemctl状态正常为inactive；</span><br><span class="line">PostgreSQL不会在系统开机时启动，只会通过shterm2-ha启动，因此systemctl显示的开机启动状态为正常</span><br><span class="line">为disabled。</span><br></pre></td></tr></table></figure>
+<p><strong>5.</strong> 检查Redis数据库记录的HA状态。</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">首先通过nc --ssl --ssl-cert=<span class="regexp">/etc/</span>shterm<span class="regexp">/client.crt --ssl-key=/</span>etc<span class="regexp">/shterm/</span>client.key 主节点的IP地址 <span class="number">6379</span>连接</span><br><span class="line">到Redis数据库，再执行以下命令。各节点的 down 和 active 参数正常状态下如本例中所示。</span><br><span class="line">[root@node01 ~]# nc --ssl --ssl-cert=<span class="regexp">/etc/</span>shterm<span class="regexp">/client.crt --ssl-key=/</span>etc<span class="regexp">/shterm/</span>client.key 主节点</span><br><span class="line">的IP地址 <span class="number">6379</span></span><br><span class="line">get <span class="string">&quot;shterm:common:monitor:ha&quot;</span></span><br><span class="line">$</span><br><span class="line">&#123;<span class="string">&quot;nodes&quot;</span>: [<span class="string">&quot;java.util.ArrayList&quot;</span>, [&#123;<span class="string">&quot;ip&quot;</span>: <span class="string">&quot;10.10.33.41&quot;</span>, <span class="string">&quot;db&quot;</span>: <span class="string">&quot;master&quot;</span>, <span class="string">&quot;down&quot;</span>: <span class="keyword">false</span> , <span class="string">&quot;active&quot;</span>: <span class="keyword">true</span> , <span class="string">&quot;es&quot;</span>:</span><br><span class="line"><span class="string">&quot;1574940699.21&quot;</span>, <span class="string">&quot;hostname&quot;</span>: <span class="string">&quot;root01&quot;</span>, <span class="string">&quot;pgRestore&quot;</span>: <span class="string">&quot;pg_restore_ok&quot;</span>, <span class="string">&quot;master&quot;</span>: <span class="keyword">true</span>, <span class="string">&quot;@class&quot;</span>:</span><br><span class="line"><span class="string">&quot;com.shterm.common.HAStatus$Node&quot;</span>, <span class="string">&quot;heartbeat&quot;</span>: <span class="string">&quot;ok&quot;</span>, <span class="string">&quot;failSwitchCount&quot;</span>: <span class="number">0</span>&#125;, &#123;<span class="string">&quot;ip&quot;</span>: <span class="string">&quot;10.10.33.42&quot;</span>,</span><br><span class="line"><span class="string">&quot;db&quot;</span>: <span class="string">&quot;async_ok&quot;</span>, <span class="string">&quot;down&quot;</span>: <span class="keyword">false</span> , <span class="string">&quot;active&quot;</span>: <span class="keyword">false</span> , <span class="string">&quot;es&quot;</span>: <span class="string">&quot;&quot;</span>, <span class="string">&quot;hostname&quot;</span>: <span class="string">&quot;root02&quot;</span>, <span class="string">&quot;pgRestore&quot;</span>:</span><br><span class="line"><span class="string">&quot;pg_restore_ok&quot;</span>, <span class="string">&quot;master&quot;</span>: <span class="keyword">false</span>, <span class="string">&quot;@class&quot;</span>: <span class="string">&quot;com.shterm.common.HAStatus$Node&quot;</span>, <span class="string">&quot;heartbeat&quot;</span>: <span class="string">&quot;ok&quot;</span>,</span><br><span class="line"><span class="string">&quot;failSwitchCount&quot;</span>: <span class="string">&quot;0&quot;</span>&#125;]], <span class="string">&quot;vip&quot;</span>: <span class="string">&quot;10.10.33.150&quot;</span>, <span class="string">&quot;@class&quot;</span>: <span class="string">&quot;com.shterm.common.HAStatus&quot;</span>&#125;</span><br><span class="line">说明: 主要关注 down 和 active 的状态， master 字段只在部署时有用，后续HA无论是否进行切换，该字段取</span><br><span class="line">值都将不变。</span><br></pre></td></tr></table></figure>
+<p><strong>6.</strong> 检查配置文件。</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">a) 检查文件同步时，是否同步会话文件。</span><br><span class="line">在主从节点分别执行以下命令，输出存在<span class="keyword">common</span>.syncSesslogs参数且取值为<span class="keyword">true</span>。</span><br><span class="line">[root<span class="title">@node01</span> ~]# cat /etc/shterm/shterm.conf |grep <span class="keyword">common</span>.syncSesslogs</span><br><span class="line"><span class="keyword">common</span>.syncSesslogs= <span class="keyword">true</span></span><br><span class="line">说明: 该参数在其他部署场景下均为<span class="keyword">false</span>，但HA场景下必须开启。</span><br><span class="line">b) 检查主节点升级(promote)时间。</span><br><span class="line">在主节点执行以下命令，输出存在promote取值。该取值表示主节点最近一次升级的时间。</span><br></pre></td></tr></table></figure>
+<h4 id="验证HA状态-6"><a href="#验证HA状态-6" class="headerlink" title="验证HA状态 6"></a>验证HA状态 6</h4><figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]<span class="comment"># cat /etc/shterm/master.conf |grep promote</span></span><br><span class="line"><span class="attr">promote=</span> <span class="number">2019</span>-<span class="number">04</span>-<span class="number">03</span> <span class="number">09</span>:<span class="number">41</span>:</span><br><span class="line">c) 检查从节点配置了主节点IP。</span><br><span class="line">在从节点执行以下命令，输出存在master，且指示的主节点IP正确：</span><br><span class="line">[root@node02 ~]<span class="comment"># cat /etc/shterm/standby.conf |grep master</span></span><br><span class="line"><span class="attr">master=</span> <span class="number">10.10</span>.<span class="number">35</span>.</span><br><span class="line">d) 检查从节点的数据库配置。</span><br><span class="line">在从节点执行以下命令，检查显示的数据库地址是否为主节点的地址，端口、数据库用户名和密码是否正确：</span><br><span class="line">[root@node02 ~]<span class="comment"># cat /var/lib/pgsql/9.6/data/recovery.conf</span></span><br><span class="line"><span class="attr">standby_mode</span> = &#x27;on&#x27;</span><br><span class="line"><span class="attr">primary_conninfo</span> = &#x27;<span class="attr">host=</span> <span class="number">10.10</span>.<span class="number">35.29</span> <span class="attr">port=</span> <span class="number">9999</span> <span class="attr">user=</span> postgres <span class="attr">password=</span> shterm</span><br><span class="line"><span class="attr">application_name=shterm-10.10.35.30</span> &#x27;</span><br><span class="line"><span class="attr">recovery_target_timeline</span> = &#x27;latest&#x27;</span><br></pre></td></tr></table></figure>
+<p><strong>7.</strong> 可选： 当配置了心跳线时，检查心跳是否正常。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">在主从节点上，先连接到<span class="selector-tag">Redis</span>数据库，再每隔几秒分别手动执行以下命令，每次执行的结果都有变化说明心跳正</span><br><span class="line">常。</span><br><span class="line"><span class="selector-tag">get</span> &quot;<span class="selector-tag">shterm</span><span class="selector-pseudo">:ha</span><span class="selector-pseudo">:peer</span><span class="selector-pseudo">:heartbeat_timestamp&quot;</span></span><br></pre></td></tr></table></figure>
+<p><strong>8.</strong> 验证HA的数据库同步功能。</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a) 使用超级管理员账号通过虚<span class="built_in">IP</span>登录RIS的Web界面。</span><br><span class="line">b) 新建测试用户<span class="keyword">test</span>。</span><br></pre></td></tr></table></figure>
+<h4 id="验证HA状态-7"><a href="#验证HA状态-7" class="headerlink" title="验证HA状态 7"></a>验证HA状态 7</h4><figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">c</span>) 执行主从切换后，在新的主节点上登录仍然能看到添加的测试用户，则表明HA的数据库同步功能正常。</span><br></pre></td></tr></table></figure>
+<h4 id="验证HA状态-8"><a href="#验证HA状态-8" class="headerlink" title="验证HA状态 8"></a>验证HA状态 8</h4><p><strong>HA相关维护操作</strong></p>
+<h1 id="3"><a href="#3" class="headerlink" title="3"></a>3</h1><p><strong>目录:</strong></p>
+<ul>
+<li>配置HA的DNS</li>
+<li>执行主从切换</li>
+<li>开启/关闭维护模式</li>
+<li>开启/关闭临时使用从节点</li>
+<li>手动同步数据</li>
+<li>手动推送审计数据</li>
+<li>手动备份Postgres数据库</li>
+<li>备份和导入系统配置</li>
+<li>拆除HA</li>
+</ul>
+<p>本章将介绍HA部署相关的维护操作。</p>
+<p>HA执行升级操作，需要开启维护模式。升级需要在各节点分别执行升级操作，升级的具体操作请参考《RIS用户手<br>册》。</p>
+<p>HA的关机/重启操作，无需开启维护模式，直接进行。如关机/重启前开启了维护模式，启动后将无法登录Web界面，需<br>要在后台关闭维护模式。</p>
+<h3 id="配置HA的DNS………………………………………………………………………………………………………………………………"><a href="#配置HA的DNS………………………………………………………………………………………………………………………………" class="headerlink" title="配置HA的DNS………………………………………………………………………………………………………………………………"></a>配置HA的DNS………………………………………………………………………………………………………………………………</h3><h5 id="系统管理员可以通过该操作，修改HA的DNS配置。"><a href="#系统管理员可以通过该操作，修改HA的DNS配置。" class="headerlink" title="系统管理员可以通过该操作，修改HA的DNS配置。"></a>系统管理员可以通过该操作，修改HA的DNS配置。</h5><h5 id="1-登录到主机或备机的控制台。"><a href="#1-登录到主机或备机的控制台。" class="headerlink" title="1. 登录到主机或备机的控制台。"></a>1. 登录到主机或备机的控制台。</h5><p><strong>2.</strong> 输入 <strong>HA Management</strong> 对应的序号并按回车。<br><strong>3.</strong> 输入 <strong>DNS Configure</strong> 对应的序号并按回车。<br><strong>4.</strong> 在收到 <strong>Please input new dns:</strong> 提示后，输入新的DNS，并按回车，DNS配置完成。<br>    <strong>说明:</strong> 最多支持配置两个DNS，中间用空格隔开。</p>
+<h3 id="执行主从切换………………………………………………………………………………………………………………………………"><a href="#执行主从切换………………………………………………………………………………………………………………………………" class="headerlink" title="执行主从切换……………………………………………………………………………………………………………………………….."></a>执行主从切换………………………………………………………………………………………………………………………………..</h3><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">注意: 执行主从切换时，当前所有在线会话会断开，并且<span class="number">3</span>分钟内无法访问Web界面以及建立新的会话。请</span><br><span class="line">确认当前没有正在进行的重要会话或重要操作后再执行该操作。</span><br><span class="line">如果HA 连续失败切换超过<span class="number">3</span>次 ，会在Web界面上方显示如下告警。</span><br></pre></td></tr></table></figure>
+<h4 id="9"><a href="#9" class="headerlink" title="9"></a>9</h4><h5 id="在网络和服务全都恢复正常后，页面告警消失。"><a href="#在网络和服务全都恢复正常后，页面告警消失。" class="headerlink" title="在网络和服务全都恢复正常后，页面告警消失。"></a>在网络和服务全都恢复正常后，页面告警消失。</h5><h5 id="当HA的自动切换出问题时，或出于其他原因想要切换HA的主节点时，可以手动执行HA的主从切换。切换后，从节"><a href="#当HA的自动切换出问题时，或出于其他原因想要切换HA的主节点时，可以手动执行HA的主从切换。切换后，从节" class="headerlink" title="当HA的自动切换出问题时，或出于其他原因想要切换HA的主节点时，可以手动执行HA的主从切换。切换后，从节"></a>当HA的自动切换出问题时，或出于其他原因想要切换HA的主节点时，可以手动执行HA的主从切换。切换后，从节</h5><h5 id="点将接管主节点的业务，并提供虚IP访问。"><a href="#点将接管主节点的业务，并提供虚IP访问。" class="headerlink" title="点将接管主节点的业务，并提供虚IP访问。"></a>点将接管主节点的业务，并提供虚IP访问。</h5><h5 id="HA的手动主从切换有以下两种方式："><a href="#HA的手动主从切换有以下两种方式：" class="headerlink" title="HA的手动主从切换有以下两种方式："></a>HA的手动主从切换有以下两种方式：</h5><ul>
+<li>在Web界面执行切换（推荐）</li>
+<li>如主节点的Web界面无法登录，可以在后台执行命令进行切换：<br>  /usr/libexec/shterm/hatools switch 从节点IP<br>该命令可以在主节点或从节点执行。但在从节点执行该命令时，从节点会检查主节点的状态，如检查到主节点状态<br>为正常，将拒绝切换。主节点执行时不受该限制。<br>Web界面进行切换的方法如下：</li>
+</ul>
+<p><strong>1.</strong> 使用超级管理员账号通过虚IP登录RIS的Web界面。<br><strong>2.</strong> 在 <strong>系统设置</strong> &gt; <strong>系统</strong> &gt; <strong>部署管理</strong> 中，选择 <strong>集群管理</strong> 。<br><strong>3.</strong> 单击主节点对应的 <strong>主从切换</strong> ，并在弹出确认提示时单击 <strong>确定</strong> 。</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">执行主从切换后，正常情况下将在<span class="number">3</span>分钟内完成切换，切换完成后可以继续访问Web界面并建立访问资产的会话。</span><br><span class="line">重新通过虚IP登录Web界面后，HA节点列表里显示的主节点已发生了改变：</span><br></pre></td></tr></table></figure>
+<h4 id="HA相关维护操作-10"><a href="#HA相关维护操作-10" class="headerlink" title="HA相关维护操作 10"></a>HA相关维护操作 10</h4><h3 id="开启-关闭维护模式………………………………………………………………………………………………………………………"><a href="#开启-关闭维护模式………………………………………………………………………………………………………………………" class="headerlink" title="开启/关闭维护模式………………………………………………………………………………………………………………………"></a>开启/关闭维护模式………………………………………………………………………………………………………………………</h3><h5 id="HA在进行升级或其他不希望HA发生自动切换的调试操作时，需要开启维护模式，以防止在操作过程中，HA进行自"><a href="#HA在进行升级或其他不希望HA发生自动切换的调试操作时，需要开启维护模式，以防止在操作过程中，HA进行自" class="headerlink" title="HA在进行升级或其他不希望HA发生自动切换的调试操作时，需要开启维护模式，以防止在操作过程中，HA进行自"></a>HA在进行升级或其他不希望HA发生自动切换的调试操作时，需要开启维护模式，以防止在操作过程中，HA进行自</h5><h5 id="动切换而产生冲突。"><a href="#动切换而产生冲突。" class="headerlink" title="动切换而产生冲突。"></a>动切换而产生冲突。</h5><h5 id="开启后，同样不支持手动切换。如果手动执行主从切换，将出现-维护模式下不支持主从切换-的错误提示。"><a href="#开启后，同样不支持手动切换。如果手动执行主从切换，将出现-维护模式下不支持主从切换-的错误提示。" class="headerlink" title="开启后，同样不支持手动切换。如果手动执行主从切换，将出现 维护模式下不支持主从切换 的错误提示。"></a>开启后，同样不支持手动切换。如果手动执行主从切换，将出现 维护模式下不支持主从切换 的错误提示。</h5><h5 id="完成操作后，请立即关闭维护模式，以保证HA在遇到故障时能够自动切换。"><a href="#完成操作后，请立即关闭维护模式，以保证HA在遇到故障时能够自动切换。" class="headerlink" title="完成操作后，请立即关闭维护模式，以保证HA在遇到故障时能够自动切换。"></a>完成操作后，请立即关闭维护模式，以保证HA在遇到故障时能够自动切换。</h5><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">开启/关闭维护模式可以在Web界面或Console控制台中操作，仅能对所有节点统一设置维护模式。</span><br><span class="line">如需在后台查询HA的维护模式状态，请先连接到Redis数据库：</span><br><span class="line">nc --ssl <span class="attribute">--ssl-cert</span>=/etc/shterm/client.crt <span class="attribute">--ssl-key</span>=/etc/shterm/client.key 任意节点的IP地址 6379</span><br><span class="line">再执行Redis命令：</span><br><span class="line"><span class="builtin-name">get</span> <span class="string">&quot;shterm:ha:maintenance-mode&quot;</span></span><br><span class="line">在Web界面开启/关闭维护模式的操作如下。如Web界面不可用，请在任意节点的Console控制台中选择 HA</span><br><span class="line">Management &gt; Enable/<span class="builtin-name">Disable</span> Maintenance Mode ，开启或关闭维护模式。</span><br></pre></td></tr></table></figure>
+<p><strong>1.</strong> 使用超级管理员账号通过虚IP登录RIS的Web界面。<br><strong>2.</strong> 在 <strong>系统设置</strong> &gt; <strong>系统</strong> &gt; <strong>系统状态</strong> 菜单，在任意节点的页签，单击 <strong>设置维护模式</strong> 。</p>
+<h4 id="HA相关维护操作-11"><a href="#HA相关维护操作-11" class="headerlink" title="HA相关维护操作 11"></a>HA相关维护操作 11</h4><h5 id="3-选择-启用-或-关闭-，并单击-确定-。"><a href="#3-选择-启用-或-关闭-，并单击-确定-。" class="headerlink" title="3. 选择 启用 或 关闭 ，并单击 确定 。"></a>3. 选择 启用 或 关闭 ，并单击 确定 。</h5><h5 id="选择-启用-后，HA的所有节点都将进入维护模式，在系统服务关闭或网络断开时不会进行自动切换。"><a href="#选择-启用-后，HA的所有节点都将进入维护模式，在系统服务关闭或网络断开时不会进行自动切换。" class="headerlink" title="选择 启用 后，HA的所有节点都将进入维护模式，在系统服务关闭或网络断开时不会进行自动切换。"></a>选择 启用 后，HA的所有节点都将进入维护模式，在系统服务关闭或网络断开时不会进行自动切换。</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">进入维护模式后，Web界面刷新后上方将进行提示，并且 系统状态 中的 维护模式 将显示为 开启 ，请确认维护模式的</span><br><span class="line">状态后再进行其他操作。</span><br></pre></td></tr></table></figure>
+<h4 id="HA相关维护操作-12"><a href="#HA相关维护操作-12" class="headerlink" title="HA相关维护操作 12"></a>HA相关维护操作 12</h4><h3 id="开启-关闭临时使用从节点……………………………………………………………………………………………………………"><a href="#开启-关闭临时使用从节点……………………………………………………………………………………………………………" class="headerlink" title="开启/关闭临时使用从节点……………………………………………………………………………………………………………."></a>开启/关闭临时使用从节点…………………………………………………………………………………………………………….</h3><h5 id="注意-开启从节点临时使用后，请确保不要在主节点上进行任何操作，否则临时使用过程中某个节点上执行"><a href="#注意-开启从节点临时使用后，请确保不要在主节点上进行任何操作，否则临时使用过程中某个节点上执行" class="headerlink" title="注意: 开启从节点临时使用后，请确保不要在主节点上进行任何操作，否则临时使用过程中某个节点上执行"></a>注意: 开启从节点临时使用后，请确保不要在主节点上进行任何操作，否则临时使用过程中某个节点上执行</h5><h5 id="的各种操作可能被覆盖。网络恢复后，将根据各节点数据库的写入时间决定主节点，会保留数据库写入时"><a href="#的各种操作可能被覆盖。网络恢复后，将根据各节点数据库的写入时间决定主节点，会保留数据库写入时" class="headerlink" title="的各种操作可能被覆盖。网络恢复后，将根据各节点数据库的写入时间决定主节点，会保留数据库写入时"></a>的各种操作可能被覆盖。网络恢复后，将根据各节点数据库的写入时间决定主节点，会保留数据库写入时</h5><h5 id="间较新的节点为主节点，将另一节点降级为从节点，并将新的主节点的数据自动覆盖到新的从节点。"><a href="#间较新的节点为主节点，将另一节点降级为从节点，并将新的主节点的数据自动覆盖到新的从节点。" class="headerlink" title="间较新的节点为主节点，将另一节点降级为从节点，并将新的主节点的数据自动覆盖到新的从节点。"></a>间较新的节点为主节点，将另一节点降级为从节点，并将新的主节点的数据自动覆盖到新的从节点。</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">当HA的从节点与其他节点完全断网，即和主节点之间的业务网口、心跳网口都不可达，和ping_ip也不可达时，允</span><br><span class="line">许用户将该从节点设置为临时使用模式。由于ping_ip不可达，此时将不会发生从节点的自动接管，因此只能通过</span><br><span class="line">该方式临时使用从节点。</span><br><span class="line">开启临时使用模式后，从节点也将提升为主节点，用户将可以访问从节点的Web界面并执行配置操作。如从节点和</span><br><span class="line">资产之间的网络可达，也可以建立访问资产的会话。</span><br></pre></td></tr></table></figure>
+<p><strong>1.</strong> 登录从节点的Console，并进入后台命令行。<br><strong>2.</strong> 执行以下命令，开启从节点临时使用模式。<br>    [root@node02 ~]# <strong>/usr/libexec/shterm/hatools set temp-write=true</strong><br>    In ha environment with no parent node.<br>    ping ip:10.10.35.29 error<br>    code:0 out: err:<br>       <strong>说明:</strong> 执行命令后，将会检查从节点和主节点之间的可达性，如仍然可达，则开启从节点临时使用模式<br>       将会失败。</p>
+<h4 id="HA相关维护操作-13"><a href="#HA相关维护操作-13" class="headerlink" title="HA相关维护操作 13"></a>HA相关维护操作 13</h4><h5 id="开启临时使用模式后，如网络恢复，则临时使用模式将自动关闭。断网过程中如主节点未进行任何操作，独立使用"><a href="#开启临时使用模式后，如网络恢复，则临时使用模式将自动关闭。断网过程中如主节点未进行任何操作，独立使用" class="headerlink" title="开启临时使用模式后，如网络恢复，则临时使用模式将自动关闭。断网过程中如主节点未进行任何操作，独立使用"></a>开启临时使用模式后，如网络恢复，则临时使用模式将自动关闭。断网过程中如主节点未进行任何操作，独立使用</h5><h5 id="的从节点将作为新的主节点，而原来的主节点数据将被覆盖并作为新的从节点。"><a href="#的从节点将作为新的主节点，而原来的主节点数据将被覆盖并作为新的从节点。" class="headerlink" title="的从节点将作为新的主节点，而原来的主节点数据将被覆盖并作为新的从节点。"></a>的从节点将作为新的主节点，而原来的主节点数据将被覆盖并作为新的从节点。</h5><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">如网络恢复后临时使用模式没有自动关闭，也可以执行<span class="regexp">/usr/</span>libexec<span class="regexp">/shterm/</span>hatools set temp-<span class="keyword">write</span>=<span class="keyword">false</span>手动关</span><br><span class="line">闭临时使用模式。</span><br></pre></td></tr></table></figure>
+<h3 id="手动同步数据………………………………………………………………………………………………………………………………"><a href="#手动同步数据………………………………………………………………………………………………………………………………" class="headerlink" title="手动同步数据………………………………………………………………………………………………………………………………"></a>手动同步数据………………………………………………………………………………………………………………………………</h3><h5 id="当从节点断网并恢复后，主节点和从节点之间的数据将会进行自动同步。"><a href="#当从节点断网并恢复后，主节点和从节点之间的数据将会进行自动同步。" class="headerlink" title="当从节点断网并恢复后，主节点和从节点之间的数据将会进行自动同步。"></a>当从节点断网并恢复后，主节点和从节点之间的数据将会进行自动同步。</h5><h5 id="但当主从节点长时间未进行同步，且同时发生了数据库写操作时，将无法进行自动同步。"><a href="#但当主从节点长时间未进行同步，且同时发生了数据库写操作时，将无法进行自动同步。" class="headerlink" title="但当主从节点长时间未进行同步，且同时发生了数据库写操作时，将无法进行自动同步。"></a>但当主从节点长时间未进行同步，且同时发生了数据库写操作时，将无法进行自动同步。</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">此时用户在登录Web界面后，左上角将收到以下提示：</span><br></pre></td></tr></table></figure>
+<h5 id="在-系统设置-gt-系统-gt-部署管理-的-集群管理-界面中，从节点状态也将显示为-同步数据库异常-。"><a href="#在-系统设置-gt-系统-gt-部署管理-的-集群管理-界面中，从节点状态也将显示为-同步数据库异常-。" class="headerlink" title="在 系统设置 &gt; 系统 &gt; 部署管理 的 集群管理 界面中，从节点状态也将显示为 同步数据库异常 。"></a>在 系统设置 &gt; 系统 &gt; 部署管理 的 集群管理 界面中，从节点状态也将显示为 同步数据库异常 。</h5><h5 id="此时，需要执行手动同步数据操作，使主节点向从节点同步数据，以保证主从节点的数据库一致性。"><a href="#此时，需要执行手动同步数据操作，使主节点向从节点同步数据，以保证主从节点的数据库一致性。" class="headerlink" title="此时，需要执行手动同步数据操作，使主节点向从节点同步数据，以保证主从节点的数据库一致性。"></a>此时，需要执行手动同步数据操作，使主节点向从节点同步数据，以保证主从节点的数据库一致性。</h5><p><strong>1.</strong> 使用超级管理员账号通过虚IP登录RIS的Web界面。<br><strong>2.</strong> 在 <strong>系统设置</strong> &gt; <strong>系统</strong> &gt; <strong>部署管理</strong> 中，选择 <strong>集群管理</strong> 。<br><strong>3.</strong> 单击从节点对应的 <strong>重新同步</strong> ，并在收到确认提示后单击 <strong>确认</strong> 。</p>
+<h5 id="执行重新同步后，请等待数据库同步完毕并刷新页面。同步完成后，页面告警消失。"><a href="#执行重新同步后，请等待数据库同步完毕并刷新页面。同步完成后，页面告警消失。" class="headerlink" title="执行重新同步后，请等待数据库同步完毕并刷新页面。同步完成后，页面告警消失。"></a>执行重新同步后，请等待数据库同步完毕并刷新页面。同步完成后，页面告警消失。</h5><h3 id="手动推送审计数据………………………………………………………………………………………………………………………"><a href="#手动推送审计数据………………………………………………………………………………………………………………………" class="headerlink" title="手动推送审计数据……………………………………………………………………………………………………………………….."></a>手动推送审计数据………………………………………………………………………………………………………………………..</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">当主节点向备节点推送ElasticSearch数据失败时，会在Web界面上方显示以下告警。</span><br></pre></td></tr></table></figure>
+<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">此时，在主节点的<span class="built_in">Console</span>菜单中会显示 Push audit data to standby ，可以通过HA主节点的<span class="built_in">Console</span>菜单，尝试</span><br><span class="line">手动推送审计数据到备节点。</span><br></pre></td></tr></table></figure>
+<h4 id="HA相关维护操作-14"><a href="#HA相关维护操作-14" class="headerlink" title="HA相关维护操作 14"></a>HA相关维护操作 14</h4><h5 id="1-登录到主节点的控制台。"><a href="#1-登录到主节点的控制台。" class="headerlink" title="1. 登录到主节点的控制台。"></a>1. 登录到主节点的控制台。</h5><p><strong>2.</strong> 输入 <strong>HA Management</strong> 对应的序号并按回车。<br><strong>3.</strong> 输入 <strong>Push audit data to standby</strong> 对应的序号并按回车。<br><strong>4.</strong> 收到确定要推送审计数据到备机的提示后，输入y并按回车。<br>等待300秒后，开始推送审计数据。但这300秒内新增的审计数据将不会被推送。<br>HA Management:</p>
+<ol>
+<li>Enable/Disable Maintenance Mode</li>
+<li>DNS Configure</li>
+<li>Push audit data to standby</li>
+<li>Undeploy</li>
+<li>Return<br>Enter selection: 3<br>Make sure to push audit data to standby? [y/n] y<br>The push will start after 300 seconds<br>push audit data to standby success.<br>推送成功后，刷新页面，页面告警消失。</li>
+</ol>
+<h3 id="手动备份Postgres数据库………………………………………………………………………………………………………………"><a href="#手动备份Postgres数据库………………………………………………………………………………………………………………" class="headerlink" title="手动备份Postgres数据库………………………………………………………………………………………………………………"></a>手动备份Postgres数据库………………………………………………………………………………………………………………</h3><figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">HA在执行切换时，备节点向主节点拉取数据之前，会将原有的Postgres数据在/var/<span class="class"><span class="keyword">lib</span>/<span class="title">pgsql</span>/9.6下备份。</span></span><br><span class="line">HA的Postgres数据库仅保留最近的<span class="number">10</span>次备份，达到<span class="number">10</span>次后会删除之前的备份。</span><br><span class="line">当HA的 Postgres数据库备份失败 时，会在Web界面上方显示以下告警，包括网络异常或备份空间不足等原因：</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">此时在备节点的Console菜单中会显示 <span class="keyword">Restore</span> configuration <span class="keyword">data</span> <span class="keyword">from</span> <span class="keyword">master</span> ，待异常恢复后，可以通</span><br><span class="line">过HA从节点的Console菜单，尝试手动从主节点同步数据。</span><br></pre></td></tr></table></figure>
+<p><strong>1.</strong> 登录到从节点的控制台。<br><strong>2.</strong> 输入 <strong>HA Management</strong> 对应的序号并按回车。<br><strong>3.</strong> 输入 <strong>Restore configuration data from master</strong> 对应的序号并按回车。<br>同步成功后，页面告警消失。</p>
+<h3 id="备份和导入系统配置……………………………………………………………………………………………………………………"><a href="#备份和导入系统配置……………………………………………………………………………………………………………………" class="headerlink" title="备份和导入系统配置……………………………………………………………………………………………………………………."></a>备份和导入系统配置…………………………………………………………………………………………………………………….</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Web界面支持进行HA的系统配置备份操作，但不支持系统配置的导入，必须在后台命令行中进行系统配置导</span><br><span class="line">入。当HA是多站点中的一个站点时，该功能界面将不可见，不支持备份系统配置。</span><br><span class="line">备份系统配置前，必须保证Postgres和Elasticsearch服务运行正常。</span><br></pre></td></tr></table></figure>
+<h4 id="HA相关维护操作-15"><a href="#HA相关维护操作-15" class="headerlink" title="HA相关维护操作 15"></a>HA相关维护操作 15</h4><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Web界面的备份操作，HA模式下与单机模式下没有什么区别，请在主节点完成备份即可。具体请参见《RIS用户手</span><br><span class="line">册》。Web界面的备份将仅备份PostgreSQL数据库和<span class="regexp">/etc/</span>shterm/中的conf配置文件。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">本节将仅介绍在后台命令行中执行的系统配置备份导入和导出操作。在Web界面完成的系统配置备份，也可以参照</span><br><span class="line">该方式完成配置导入。</span><br><span class="line">备份系统配置</span><br></pre></td></tr></table></figure>
+<p><strong>1.</strong> 在任一节点登录RIS的Console并进入后台命令行。<br><strong>2.</strong> 新建一个文件夹用于保存备份文件。<br>    mkdir /root/bak<br><strong>3.</strong> 执行shtermutils dump 文件夹路径命令进行备份。收到提示后确认磁盘空间足够则输入Y完确认。<br>    [root@node02 ~]# shtermutils dump /root/bak<br>    Shterm data dumping utilities<br>    ———————————————————————<br>    The size of the database to be dumped: 15.37 MB<br>    The size of ES data to be dumped: 0.25 KB<br>    The size of files to be dumped: 8.04 MB<br>    ———————————————————————<br>    The total space required for dumping: 23.66 MB<br>    The amount of free disk space used to save the dump file: 46.66 GB<br>    Continue to dump the data? (Y/n) Y<br>    Dumping database, please wait… Completed<br>    Dumping ES data, please wait… Completed<br>    Compressing all dumped files, please wait… Completed<br>    Dump file: /root/bak/dump_20190404.dat<br>       <strong>说明:</strong> 也可以在命令中指定具体的参数，仅对部分文件进行备份：<br>       - -db：备份PostgreSQL数据库。<br>       - -es：备份所有存放在ElasticSearch中的审计数据。<br>       - -arango：备份arangodb数据库（基线检查数据）。<br>       - -file：备份/var/shtermdata/share/shterm（页面配置数据和较大的日志文件数据）。<br>       - -all：备份以上所有数据。当不带任何参数时也默认备份所有数据。</p>
+<h4 id="HA相关维护操作-16"><a href="#HA相关维护操作-16" class="headerlink" title="HA相关维护操作 16"></a>HA相关维护操作 16</h4><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">无论使用哪些参数，都将会对<span class="regexp">/etc/</span>shterm/中的conf配置文件也进行备份。</span><br><span class="line">导入系统配置</span><br></pre></td></tr></table></figure>
+<p><strong>4.</strong> 如需将备份的系统配置数据导入RIS中，在主节点执行以下命令，开启数据库恢复模式。<br>    /usr/libexec/shterm/hatools set pg-restore-mode=true<br>       <strong>说明:</strong> 开启数据库恢复模式后，主节点将关闭pgpool服务，PostgreSQL服务将切回5432端口。<br><strong>5.</strong> 在主节点执行shtermutils restore 备份文件命令，导入系统配置。连续输入y进行确认。<br>    [root@node01 ~]# <strong>shtermutils restore /root/bak/dump_20190404.dat</strong><br>    WARNING: The current data will be DELETED and replaced with the dumped data!<br>    Please confirm whether to continue? (y/N) <strong>y</strong><br>    Shterm data restore utilities<br>    ———————————————————————<br>    Preparing data, please wait…<br>    The following data will be restored: database ESData file<br>    Continue to restore the data? (Y/n) <strong>y</strong><br>    Restoring database, please wait… Completed<br>    Restoring ES data, please wait… Completed<br>    Please wait for the cleanup task to complete…<br>    Restoring file data, please wait… Completed<br>    Shterm data restored successfully.<br><strong>6.</strong> 导入系统配置完成后，在主节点执行以下命令，关闭数据库恢复模式。<br>    /usr/libexec/shterm/hatools set pg-restore-mode=false<br>       <strong>说明:</strong> 关闭数据库恢复模式后，可以先通过nc –ssl –ssl-cert=/etc/shterm/client.crt –ssl-key=/etc/<br>       shterm/client.key 主节点的IP地址 6379连接到Redis数据库，再执行get “shterm:ha:pg-restore-<br>       mode”命令查询数据库恢复模式的状态，取值为 <strong>true</strong> 表示开启，取值为 <strong>false</strong> 或 <strong>nil</strong> 表示关闭。</p>
+<h3 id="拆除HA………………………………………………………………………………………………………………………………………"><a href="#拆除HA………………………………………………………………………………………………………………………………………" class="headerlink" title="拆除HA………………………………………………………………………………………………………………………………………"></a>拆除HA………………………………………………………………………………………………………………………………………</h3><figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">HA的拆除可以在Web界面执行，在主节点执行拆除HA拆除操作后将拆除整个HA。</span><br><span class="line">如HA的Web界面无法登录，可以在各节点的<span class="built_in">Console</span>菜单中分别执行 HA Management &gt; Undeploy ，完成</span><br><span class="line">对HA的拆除操作。</span><br><span class="line">本节步骤中仅介绍在Web界面完成HA的拆除操作。</span><br></pre></td></tr></table></figure>
+<p><strong>1.</strong> 使用超级管理员账号通过虚IP登录RIS的Web界面。<br><strong>2.</strong> 在 <strong>系统设置</strong> &gt; <strong>系统</strong> &gt; <strong>部署管理</strong> 中，选择 <strong>集群管理</strong> 。<br><strong>3.</strong> 单击 <strong>拆除HA</strong> 按钮，在弹出提示后单击 <strong>确定</strong> ，进行HA的拆除。</p>
+<h4 id="HA相关维护操作-17"><a href="#HA相关维护操作-17" class="headerlink" title="HA相关维护操作 17"></a>HA相关维护操作 17</h4><h5 id="等待RIS执行操作，完成后刷新页面，将看到HA已拆除。拆除后各节点可以继续作为单机使用。"><a href="#等待RIS执行操作，完成后刷新页面，将看到HA已拆除。拆除后各节点可以继续作为单机使用。" class="headerlink" title="等待RIS执行操作，完成后刷新页面，将看到HA已拆除。拆除后各节点可以继续作为单机使用。"></a>等待RIS执行操作，完成后刷新页面，将看到HA已拆除。拆除后各节点可以继续作为单机使用。</h5><figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">如在Web界面执行拆除操作前从节点无法连接，将仅进行主节点的拆除操作。从节点恢复后，检测不到主节点时会</span><br><span class="line">进行自动接管，或者在从节点手动执行主从切换，请登录到该节点的Web界面继续完成该节点的拆除操作。或直接</span><br><span class="line">在<span class="built_in">Console</span>菜单完成拆除操作。</span><br></pre></td></tr></table></figure>
+<h4 id="HA相关维护操作-18"><a href="#HA相关维护操作-18" class="headerlink" title="HA相关维护操作 18"></a>HA相关维护操作 18</h4><p><strong>附录</strong></p>
+<h1 id="4-1"><a href="#4-1" class="headerlink" title="4"></a>4</h1><p><strong>目录:</strong></p>
+<ul>
+<li>登录RIS的Console</li>
+<li>HA相关日志</li>
+</ul>
+<h3 id="登录RIS的Console………………………………………………………………………………………………………………………"><a href="#登录RIS的Console………………………………………………………………………………………………………………………" class="headerlink" title="登录RIS的Console………………………………………………………………………………………………………………………"></a>登录RIS的Console………………………………………………………………………………………………………………………</h3><figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Console</span>控制台支持通过多种方式登录。登录到控制台之后，管理员可以进行重置admin账号、使用系统工具、修</span><br><span class="line">改主机名等功能。</span><br><span class="line">RIS的<span class="built_in">Console</span>支持以下登录方式：</span><br></pre></td></tr></table></figure>
+<ul>
+<li>显示器直连</li>
+<li>SSH远程登录</li>
+<li>IPMI登录<br>登录过程中需要使用以下密码或密钥，请提前准备：</li>
+</ul>
+<h4 id="19"><a href="#19" class="headerlink" title="19"></a>19</h4><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">表 <span class="number">1</span>: Console密码和密钥</span><br></pre></td></tr></table></figure>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">名称 初始值 使用场景 说明</span><br><span class="line">root密钥 请参考：</span><br></pre></td></tr></table></figure>
+<ul>
+<li>《用户手<br>  册》的概<br>  述&gt;登录<br>  方式&gt;参<br>  考&gt;Console登<br>  录密钥章<br>  节。</li>
+<li>《安装<br>  与部署指<br>  南（虚拟<br>  化）》的部<br>  署&gt;参<br>  考&gt;Console登<br>  录密钥章<br>  节。</li>
+</ul>
+<h5 id="SSH远程登录-修改密钥请参考："><a href="#SSH远程登录-修改密钥请参考：" class="headerlink" title="SSH远程登录 修改密钥请参考："></a>SSH远程登录 修改密钥请参考：</h5><ul>
+<li>《用户手册》的Console控制台&gt;配置Console控<br>  制台登录控制&gt;更新远程访问私钥章节。</li>
+<li>《安装与部署指南（虚拟化）》的部署&gt;更<br>  新Console访问密钥和密码章节。</li>
+</ul>
+<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root密码 <span class="number">4</span>O<span class="meta">O88</span><span class="meta">O2393</span>（O为</span><br><span class="line">大写字母）</span><br></pre></td></tr></table></figure>
+<h5 id="•-IPMI登录"><a href="#•-IPMI登录" class="headerlink" title="• IPMI登录"></a>• IPMI登录</h5><h5 id="•-显示器直连"><a href="#•-显示器直连" class="headerlink" title="• 显示器直连"></a>• 显示器直连</h5><figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>密码 admin 所有场景</span><br></pre></td></tr></table></figure>
+<h5 id="修改密码请参考："><a href="#修改密码请参考：" class="headerlink" title="修改密码请参考："></a>修改密码请参考：</h5><ul>
+<li>《用户手册》的Console控制台&gt;使用系统工具章<br>  节。</li>
+<li>《安装与部署指南（虚拟化）》的部署&gt;更<br>  新Console访问密钥和密码章节。<br>console密码超过90天未修改，会在登录时提示，但<br>不修改不影响使用。<br>HA/集群环境下，各节点使用独立的console密码。</li>
+</ul>
+<h4 id="通过显示器直连登录Console………………………………………………………………………………………………"><a href="#通过显示器直连登录Console………………………………………………………………………………………………" class="headerlink" title="通过显示器直连登录Console………………………………………………………………………………………………."></a>通过显示器直连登录Console……………………………………………………………………………………………….</h4><h5 id="•-对于硬件部署的RIS：请准备一台支持VGA接口的显示器、VGA连接线、键盘，将显示器和键盘直接连接到设备"><a href="#•-对于硬件部署的RIS：请准备一台支持VGA接口的显示器、VGA连接线、键盘，将显示器和键盘直接连接到设备" class="headerlink" title="• 对于硬件部署的RIS：请准备一台支持VGA接口的显示器、VGA连接线、键盘，将显示器和键盘直接连接到设备"></a>• 对于硬件部署的RIS：请准备一台支持VGA接口的显示器、VGA连接线、键盘，将显示器和键盘直接连接到设备</h5><h5 id="上登录进行操作。"><a href="#上登录进行操作。" class="headerlink" title="上登录进行操作。"></a>上登录进行操作。</h5><h5 id="•-对于虚拟化部署的RIS：可以直接通过虚拟机控制台进行操作。"><a href="#•-对于虚拟化部署的RIS：可以直接通过虚拟机控制台进行操作。" class="headerlink" title="• 对于虚拟化部署的RIS：可以直接通过虚拟机控制台进行操作。"></a>• 对于虚拟化部署的RIS：可以直接通过虚拟机控制台进行操作。</h5><h5 id="1-通过显示器-虚拟机控制台访问RIS。"><a href="#1-通过显示器-虚拟机控制台访问RIS。" class="headerlink" title="1. 通过显示器/虚拟机控制台访问RIS。"></a>1. 通过显示器/虚拟机控制台访问RIS。</h5><h4 id="附录-20"><a href="#附录-20" class="headerlink" title="附录 20"></a>附录 20</h4><p><strong>2.</strong> 输入用户名 <strong>root</strong> 及其密码，请参考Console密码和密钥表格，并按回车。<br><strong>3.</strong> 输入console的登录密码，请参考Console密码和密钥表格，完成后按回车，进入Console主菜单。<br>    <strong>说明:</strong> 密码输入超时或错误3次后，可以选择通过challenge进入。请联系齐治科技技术支持人员并提供<br>    显示的 <strong>User Code</strong> ，获取challenge码。<br>完成后进入Console主菜单，可以执行菜单选项进行控制台管理，或者输入q并按回车退出登录。</p>
+<h4 id="通过SSH远程登录Console…………………………………………………………………………………………………"><a href="#通过SSH远程登录Console…………………………………………………………………………………………………" class="headerlink" title="通过SSH远程登录Console…………………………………………………………………………………………………."></a>通过SSH远程登录Console………………………………………………………………………………………………….</h4><figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">使用SSH远程登录<span class="built_in">Console</span>，需要提前准备Xshell、SecureCRT等支持SSH协议的工具。</span><br><span class="line">另外还需要满足以下前提条件：</span><br></pre></td></tr></table></figure>
+<ul>
+<li>已为RIS分配了IP，并且和本地客户端的网络相连通。</li>
+<li>RIS的TCP/8022端口可用，未受到防火墙限制。</li>
+<li>RIS默认禁用通过SSH登录Console控制台，登录前已在Web界面的 <strong>系统设置</strong> &gt; <strong>系统</strong> &gt; <strong>系统状态</strong> 中设置 <strong>sshd外部</strong><br>  <strong>访问</strong> 参数为 <strong>开启</strong> 。</li>
+<li>已获取用于登录RIS的私钥，请参考Console密码和密钥表格。<br>本文以Xshell为例介绍登录步骤，SecureCRT的配置与Xshell基本相同。</li>
+</ul>
+<p><strong>1.</strong> 在Xshell主界面，选择 <strong>文件</strong> &gt; <strong>新建</strong> ，新建一个SSH连接。<br><strong>2.</strong> 在 <strong>连接</strong> 菜单设置会话以下属性：<br>    - <strong>名称</strong> ：用户自定义的连接名称<br>    - <strong>协议</strong> ：SSH</p>
+<h4 id="附录-21"><a href="#附录-21" class="headerlink" title="附录 21"></a>附录 21</h4><h5 id="•-主机-：RIS的IP地址"><a href="#•-主机-：RIS的IP地址" class="headerlink" title="• 主机 ：RIS的IP地址"></a>• 主机 ：RIS的IP地址</h5><h5 id="•-端口号-：8022"><a href="#•-端口号-：8022" class="headerlink" title="• 端口号 ：8022"></a>• 端口号 ：8022</h5><h5 id="3-在-连接-gt-用户身份验证-菜单，配置以下属性，并单击-连接-。"><a href="#3-在-连接-gt-用户身份验证-菜单，配置以下属性，并单击-连接-。" class="headerlink" title="3. 在 连接 &gt; 用户身份验证 菜单，配置以下属性，并单击 连接 。"></a>3. 在 连接 &gt; 用户身份验证 菜单，配置以下属性，并单击 连接 。</h5><ul>
+<li><strong>方法</strong> ：Public Key</li>
+<li><strong>用户名</strong> ：root</li>
+<li><strong>用户密钥</strong> ：选择已获取的用于登录的私钥</li>
+<li><strong>密码</strong> ：默认为空</li>
+</ul>
+<h4 id="附录-22"><a href="#附录-22" class="headerlink" title="附录 22"></a>附录 22</h4><p><strong>4.</strong> 输入console的登录密码，完成后按回车，进入Console主菜单。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">说明: 密码输入超时或错误3次后，可以选择通过challenge进入。请联系齐治科技技术支持人员并提供</span><br><span class="line">显示的<span class="built_in"> User </span>Code ，获取challenge码。</span><br><span class="line">完成后进入Console主菜单，可以执行菜单选项进行控制台管理，或者输入q并按回车退出登录。</span><br></pre></td></tr></table></figure>
+<h4 id="附录-23"><a href="#附录-23" class="headerlink" title="附录 23"></a>附录 23</h4><h4 id="通过IPMI远程登录Console…………………………………………………………………………………………………"><a href="#通过IPMI远程登录Console…………………………………………………………………………………………………" class="headerlink" title="通过IPMI远程登录Console…………………………………………………………………………………………………."></a>通过IPMI远程登录Console………………………………………………………………………………………………….</h4><figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">仅当硬件部署时，可以使用IPMI远程登录<span class="built_in">Console</span>。IPMI是RIS的带外管理接口。</span><br><span class="line">使用IPMI必须满足以下前提条件：</span><br></pre></td></tr></table></figure>
+<ul>
+<li>RIS的IPMI网口已连接了网线。</li>
+<li>已为IPMI网口设置IP地址并和本地PC网络可达，具体请参考《RIS安装部署指南》。</li>
+<li>本地PC已安装了JAVA，版本为JAVA 1.6及以上，并将IPMI地址添加到了JAVA安全例外。</li>
+</ul>
+<p><strong>1.</strong> 在浏览器中访问<a target="_blank" rel="noopener" href="http://ipmi的ip地址./">http://IPMI的IP地址。</a><br><strong>2.</strong> 输入用户名和密码，并单击 <strong>login</strong> 。</p>
+<h5 id="说明-ADMIN用户的默认密码为ADMIN。"><a href="#说明-ADMIN用户的默认密码为ADMIN。" class="headerlink" title="说明: ADMIN用户的默认密码为ADMIN。"></a>说明: ADMIN用户的默认密码为ADMIN。</h5><p><strong>3.</strong> 选择 <strong>System</strong> ，并单击 <strong>Remote Console Preview</strong> 中的截屏，下载launch.jnlp。</p>
+<h4 id="附录-24"><a href="#附录-24" class="headerlink" title="附录 24"></a>附录 24</h4><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">说明: 也可以选择 Remote Control &gt;<span class="built_in"> Console </span>Redirection 并单击 Launch<span class="built_in"> Console </span>，下</span><br><span class="line">载launch.jnlp。</span><br></pre></td></tr></table></figure>
+<p><strong>4.</strong> 双击已下载的launch.jnlp，打开JAVA窗口。</p>
+<h4 id="附录-25"><a href="#附录-25" class="headerlink" title="附录 25"></a>附录 25</h4><p><strong>5.</strong> 输入用户名 <strong>root</strong> 及其密码，请参考Console密码和密钥表格，并按回车。<br><strong>6.</strong> 输入console的登录密码，请参考Console密码和密钥表格，完成后按回车，进入Console主菜单。<br>    <strong>说明:</strong> 密码输入超时或错误3次后，可以选择通过challenge进入。请联系齐治科技技术支持人员并提供<br>    显示的 <strong>User Code</strong> ，获取challenge码。<br>完成后进入Console主菜单，可以执行菜单选项进行控制台管理，或者输入q并按回车退出登录。</p>
+<h4 id="附录-26"><a href="#附录-26" class="headerlink" title="附录 26"></a>附录 26</h4><h3 id="HA相关日志………………………………………………………………………………………………………………………………"><a href="#HA相关日志………………………………………………………………………………………………………………………………" class="headerlink" title="HA相关日志……………………………………………………………………………………………………………………………….."></a>HA相关日志………………………………………………………………………………………………………………………………..</h3><h5 id="在定位HA的问题时，除了进行验证HA状态之外，也可以通过查看相关日志来进行问题的定位。可以搜集以下日志"><a href="#在定位HA的问题时，除了进行验证HA状态之外，也可以通过查看相关日志来进行问题的定位。可以搜集以下日志" class="headerlink" title="在定位HA的问题时，除了进行验证HA状态之外，也可以通过查看相关日志来进行问题的定位。可以搜集以下日志"></a>在定位HA的问题时，除了进行验证HA状态之外，也可以通过查看相关日志来进行问题的定位。可以搜集以下日志</h5><h5 id="并发送给齐治科技技术支持进行问题的定位分析与处理。"><a href="#并发送给齐治科技技术支持进行问题的定位分析与处理。" class="headerlink" title="并发送给齐治科技技术支持进行问题的定位分析与处理。"></a>并发送给齐治科技技术支持进行问题的定位分析与处理。</h5><h5 id="模块名称-日志"><a href="#模块名称-日志" class="headerlink" title="模块名称 日志"></a>模块名称 日志</h5><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">shterm2-ha <span class="regexp">/var/</span>log<span class="regexp">/shterm/</span>shterm2-ha.log</span><br><span class="line">PostgreSQL <span class="regexp">/var/</span>lib<span class="regexp">/pgsql/</span><span class="number">9.6</span><span class="regexp">/data/</span>pg_log/文件夹中的日志</span><br><span class="line">Redis <span class="regexp">/var/</span>log<span class="regexp">/redis/</span>redis.log</span><br><span class="line">ElasticSearch <span class="regexp">/var/</span>log<span class="regexp">/elasticsearch/</span>文件夹中的日志</span><br><span class="line">Tomcat <span class="regexp">/var/</span>log<span class="regexp">/tomcat/</span>tomcat.log</span><br></pre></td></tr></table></figure>
+<h4 id="附录-27"><a href="#附录-27" class="headerlink" title="附录 27"></a>附录 27</h4>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/11/yiban/" rel="prev" title="易班打卡">
+      <i class="fa fa-chevron-left"></i> 易班打卡
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#RIS%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83%E9%A3%8E%E9%99%A9%E6%B4%9E%E5%AF%9F%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.</span> <span class="nav-text">RIS数据中心风险洞察系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HA%E7%BB%B4%E6%8A%A4%E6%89%8B%E5%86%8C"><span class="nav-number">2.</span> <span class="nav-text">HA维护手册</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%99%E6%B1%9F%E9%BD%90%E6%B2%BB%E7%A7%91%E6%8A%80%E8%82%A1%E4%BB%BD%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8"><span class="nav-number">2.1.</span> <span class="nav-text">浙江齐治科技股份有限公司</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A3%B0%E6%98%8E"><span class="nav-number">2.2.</span> <span class="nav-text">声明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HA%E6%9C%BA%E5%88%B6"><span class="nav-number">2.3.</span> <span class="nav-text">HA机制</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B5%84%E4%BA%A7"><span class="nav-number">2.3.0.1.</span> <span class="nav-text">资产</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%A8%E6%88%B7"><span class="nav-number">2.3.0.2.</span> <span class="nav-text">用户</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B5%84%E4%BA%A7%E8%AE%BF%E9%97%AE"><span class="nav-number">2.3.0.3.</span> <span class="nav-text">资产访问</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5"><span class="nav-number">2.3.0.4.</span> <span class="nav-text">数据同步</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BF%83%E8%B7%B3%E5%90%8C%E6%AD%A5"><span class="nav-number">2.3.0.5.</span> <span class="nav-text">心跳同步</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RIS%EF%BC%88%E4%B8%BB%EF%BC%89"><span class="nav-number">2.3.1.</span> <span class="nav-text">RIS（主）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RIS%EF%BC%88%E5%A4%87%EF%BC%89"><span class="nav-number">2.3.2.</span> <span class="nav-text">RIS（备）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BA%A4%E6%8D%A2%E6%9C%BA"><span class="nav-number">2.3.2.1.</span> <span class="nav-text">交换机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B5%84%E4%BA%A71-%E8%B5%84%E4%BA%A7"><span class="nav-number">2.3.2.2.</span> <span class="nav-text">资产1 资产</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5-1"><span class="nav-number">2.3.2.3.</span> <span class="nav-text">数据同步</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HA%E7%9A%84%E4%B8%BB%E8%8A%82%E7%82%B9%E4%BC%9A%E5%B0%86%E6%95%B0%E6%8D%AE%E4%B8%8D%E6%96%AD%E5%90%8C%E6%AD%A5%E7%BB%99%E4%BB%8E%E8%8A%82%E7%82%B9%EF%BC%8C%E4%BB%A5%E4%BF%9D%E8%AF%81%E4%B8%A4%E4%B8%AA%E8%8A%82%E7%82%B9%E4%B9%8B%E9%97%B4%E7%9A%84%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E3%80%82"><span class="nav-number">2.3.2.4.</span> <span class="nav-text">HA的主节点会将数据不断同步给从节点，以保证两个节点之间的数据一致性。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1"><span class="nav-number">2.3.3.</span> <span class="nav-text">1</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B-%E5%90%8C%E6%AD%A5%E6%96%B9%E5%BC%8F"><span class="nav-number">2.3.3.1.</span> <span class="nav-text">数据类型 同步方式</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HA%E6%9C%BA%E5%88%B6-2"><span class="nav-number">2.3.4.</span> <span class="nav-text">HA机制 2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HA%E6%9C%BA%E5%88%B6-3"><span class="nav-number">2.3.5.</span> <span class="nav-text">HA机制 3</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2"><span class="nav-number"></span> <span class="nav-text">2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4"><span class="nav-number">0.0.1.</span> <span class="nav-text">4</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E-HA%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81%E4%B8%AD%EF%BC%8C%E9%9C%80%E8%A6%81%E6%A3%80%E6%9F%A5%E4%BB%A5%E4%B8%8B%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%8A%B6%E6%80%81%E6%98%AF%E5%90%A6%E6%AD%A3%E5%B8%B8%EF%BC%8C%E5%A6%82%E6%9E%9C%E8%BF%9B%E7%A8%8B%E4%B8%8D%E5%AD%98%E5%9C%A8%E6%88%96%E8%80%85%E7%8A%B6%E6%80%81%E4%B8%BAD%E6%88%96%E8%80%85Z%E7%9A%84%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E3%80%82"><span class="nav-number">0.0.1.1.</span> <span class="nav-text">说明: HA进程状态中，需要检查以下进程的状态是否正常，如果进程不存在或者状态为D或者Z的需要注意。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81HA%E7%8A%B6%E6%80%81-5"><span class="nav-number">0.0.2.</span> <span class="nav-text">验证HA状态 5</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E-%E4%BB%A5%E4%B8%8A%E6%89%80%E6%9C%89%E8%BF%9B%E7%A8%8B%E5%9D%87%E5%8F%AF%E4%BB%A5%E5%9C%A8%E5%90%8E%E5%8F%B0%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%AD%E6%9F%A5%E7%9C%8B%EF%BC%8C%E5%8F%AF%E4%BB%A5%E6%89%A7%E8%A1%8C%E4%BB%A5%E4%B8%8B%E5%91%BD%E4%BB%A4%E8%BF%9B%E8%A1%8C%E6%A3%80%E6%9F%A5%EF%BC%9A"><span class="nav-number">0.0.2.1.</span> <span class="nav-text">说明: 以上所有进程均可以在后台命令行中查看，可以执行以下命令进行检查：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81HA%E7%8A%B6%E6%80%81-6"><span class="nav-number">0.0.3.</span> <span class="nav-text">验证HA状态 6</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81HA%E7%8A%B6%E6%80%81-7"><span class="nav-number">0.0.4.</span> <span class="nav-text">验证HA状态 7</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81HA%E7%8A%B6%E6%80%81-8"><span class="nav-number">0.0.5.</span> <span class="nav-text">验证HA状态 8</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3"><span class="nav-number"></span> <span class="nav-text">3</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEHA%E7%9A%84DNS%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6"><span class="nav-number">0.1.</span> <span class="nav-text">配置HA的DNS………………………………………………………………………………………………………………………………</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E5%8F%AF%E4%BB%A5%E9%80%9A%E8%BF%87%E8%AF%A5%E6%93%8D%E4%BD%9C%EF%BC%8C%E4%BF%AE%E6%94%B9HA%E7%9A%84DNS%E9%85%8D%E7%BD%AE%E3%80%82"><span class="nav-number">0.1.0.1.</span> <span class="nav-text">系统管理员可以通过该操作，修改HA的DNS配置。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E7%99%BB%E5%BD%95%E5%88%B0%E4%B8%BB%E6%9C%BA%E6%88%96%E5%A4%87%E6%9C%BA%E7%9A%84%E6%8E%A7%E5%88%B6%E5%8F%B0%E3%80%82"><span class="nav-number">0.1.0.2.</span> <span class="nav-text">1. 登录到主机或备机的控制台。</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E4%B8%BB%E4%BB%8E%E5%88%87%E6%8D%A2%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6"><span class="nav-number">0.2.</span> <span class="nav-text">执行主从切换………………………………………………………………………………………………………………………………..</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#9"><span class="nav-number">0.2.1.</span> <span class="nav-text">9</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9C%A8%E7%BD%91%E7%BB%9C%E5%92%8C%E6%9C%8D%E5%8A%A1%E5%85%A8%E9%83%BD%E6%81%A2%E5%A4%8D%E6%AD%A3%E5%B8%B8%E5%90%8E%EF%BC%8C%E9%A1%B5%E9%9D%A2%E5%91%8A%E8%AD%A6%E6%B6%88%E5%A4%B1%E3%80%82"><span class="nav-number">0.2.1.1.</span> <span class="nav-text">在网络和服务全都恢复正常后，页面告警消失。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BD%93HA%E7%9A%84%E8%87%AA%E5%8A%A8%E5%88%87%E6%8D%A2%E5%87%BA%E9%97%AE%E9%A2%98%E6%97%B6%EF%BC%8C%E6%88%96%E5%87%BA%E4%BA%8E%E5%85%B6%E4%BB%96%E5%8E%9F%E5%9B%A0%E6%83%B3%E8%A6%81%E5%88%87%E6%8D%A2HA%E7%9A%84%E4%B8%BB%E8%8A%82%E7%82%B9%E6%97%B6%EF%BC%8C%E5%8F%AF%E4%BB%A5%E6%89%8B%E5%8A%A8%E6%89%A7%E8%A1%8CHA%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%88%87%E6%8D%A2%E3%80%82%E5%88%87%E6%8D%A2%E5%90%8E%EF%BC%8C%E4%BB%8E%E8%8A%82"><span class="nav-number">0.2.1.2.</span> <span class="nav-text">当HA的自动切换出问题时，或出于其他原因想要切换HA的主节点时，可以手动执行HA的主从切换。切换后，从节</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%82%B9%E5%B0%86%E6%8E%A5%E7%AE%A1%E4%B8%BB%E8%8A%82%E7%82%B9%E7%9A%84%E4%B8%9A%E5%8A%A1%EF%BC%8C%E5%B9%B6%E6%8F%90%E4%BE%9B%E8%99%9AIP%E8%AE%BF%E9%97%AE%E3%80%82"><span class="nav-number">0.2.1.3.</span> <span class="nav-text">点将接管主节点的业务，并提供虚IP访问。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HA%E7%9A%84%E6%89%8B%E5%8A%A8%E4%B8%BB%E4%BB%8E%E5%88%87%E6%8D%A2%E6%9C%89%E4%BB%A5%E4%B8%8B%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%EF%BC%9A"><span class="nav-number">0.2.1.4.</span> <span class="nav-text">HA的手动主从切换有以下两种方式：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HA%E7%9B%B8%E5%85%B3%E7%BB%B4%E6%8A%A4%E6%93%8D%E4%BD%9C-10"><span class="nav-number">0.2.2.</span> <span class="nav-text">HA相关维护操作 10</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%90%AF-%E5%85%B3%E9%97%AD%E7%BB%B4%E6%8A%A4%E6%A8%A1%E5%BC%8F%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6"><span class="nav-number">0.3.</span> <span class="nav-text">开启&#x2F;关闭维护模式………………………………………………………………………………………………………………………</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#HA%E5%9C%A8%E8%BF%9B%E8%A1%8C%E5%8D%87%E7%BA%A7%E6%88%96%E5%85%B6%E4%BB%96%E4%B8%8D%E5%B8%8C%E6%9C%9BHA%E5%8F%91%E7%94%9F%E8%87%AA%E5%8A%A8%E5%88%87%E6%8D%A2%E7%9A%84%E8%B0%83%E8%AF%95%E6%93%8D%E4%BD%9C%E6%97%B6%EF%BC%8C%E9%9C%80%E8%A6%81%E5%BC%80%E5%90%AF%E7%BB%B4%E6%8A%A4%E6%A8%A1%E5%BC%8F%EF%BC%8C%E4%BB%A5%E9%98%B2%E6%AD%A2%E5%9C%A8%E6%93%8D%E4%BD%9C%E8%BF%87%E7%A8%8B%E4%B8%AD%EF%BC%8CHA%E8%BF%9B%E8%A1%8C%E8%87%AA"><span class="nav-number">0.3.0.1.</span> <span class="nav-text">HA在进行升级或其他不希望HA发生自动切换的调试操作时，需要开启维护模式，以防止在操作过程中，HA进行自</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8A%A8%E5%88%87%E6%8D%A2%E8%80%8C%E4%BA%A7%E7%94%9F%E5%86%B2%E7%AA%81%E3%80%82"><span class="nav-number">0.3.0.2.</span> <span class="nav-text">动切换而产生冲突。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BC%80%E5%90%AF%E5%90%8E%EF%BC%8C%E5%90%8C%E6%A0%B7%E4%B8%8D%E6%94%AF%E6%8C%81%E6%89%8B%E5%8A%A8%E5%88%87%E6%8D%A2%E3%80%82%E5%A6%82%E6%9E%9C%E6%89%8B%E5%8A%A8%E6%89%A7%E8%A1%8C%E4%B8%BB%E4%BB%8E%E5%88%87%E6%8D%A2%EF%BC%8C%E5%B0%86%E5%87%BA%E7%8E%B0-%E7%BB%B4%E6%8A%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E4%B8%8D%E6%94%AF%E6%8C%81%E4%B8%BB%E4%BB%8E%E5%88%87%E6%8D%A2-%E7%9A%84%E9%94%99%E8%AF%AF%E6%8F%90%E7%A4%BA%E3%80%82"><span class="nav-number">0.3.0.3.</span> <span class="nav-text">开启后，同样不支持手动切换。如果手动执行主从切换，将出现 维护模式下不支持主从切换 的错误提示。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%8C%E6%88%90%E6%93%8D%E4%BD%9C%E5%90%8E%EF%BC%8C%E8%AF%B7%E7%AB%8B%E5%8D%B3%E5%85%B3%E9%97%AD%E7%BB%B4%E6%8A%A4%E6%A8%A1%E5%BC%8F%EF%BC%8C%E4%BB%A5%E4%BF%9D%E8%AF%81HA%E5%9C%A8%E9%81%87%E5%88%B0%E6%95%85%E9%9A%9C%E6%97%B6%E8%83%BD%E5%A4%9F%E8%87%AA%E5%8A%A8%E5%88%87%E6%8D%A2%E3%80%82"><span class="nav-number">0.3.0.4.</span> <span class="nav-text">完成操作后，请立即关闭维护模式，以保证HA在遇到故障时能够自动切换。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HA%E7%9B%B8%E5%85%B3%E7%BB%B4%E6%8A%A4%E6%93%8D%E4%BD%9C-11"><span class="nav-number">0.3.1.</span> <span class="nav-text">HA相关维护操作 11</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E9%80%89%E6%8B%A9-%E5%90%AF%E7%94%A8-%E6%88%96-%E5%85%B3%E9%97%AD-%EF%BC%8C%E5%B9%B6%E5%8D%95%E5%87%BB-%E7%A1%AE%E5%AE%9A-%E3%80%82"><span class="nav-number">0.3.1.1.</span> <span class="nav-text">3. 选择 启用 或 关闭 ，并单击 确定 。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%89%E6%8B%A9-%E5%90%AF%E7%94%A8-%E5%90%8E%EF%BC%8CHA%E7%9A%84%E6%89%80%E6%9C%89%E8%8A%82%E7%82%B9%E9%83%BD%E5%B0%86%E8%BF%9B%E5%85%A5%E7%BB%B4%E6%8A%A4%E6%A8%A1%E5%BC%8F%EF%BC%8C%E5%9C%A8%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E5%85%B3%E9%97%AD%E6%88%96%E7%BD%91%E7%BB%9C%E6%96%AD%E5%BC%80%E6%97%B6%E4%B8%8D%E4%BC%9A%E8%BF%9B%E8%A1%8C%E8%87%AA%E5%8A%A8%E5%88%87%E6%8D%A2%E3%80%82"><span class="nav-number">0.3.1.2.</span> <span class="nav-text">选择 启用 后，HA的所有节点都将进入维护模式，在系统服务关闭或网络断开时不会进行自动切换。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HA%E7%9B%B8%E5%85%B3%E7%BB%B4%E6%8A%A4%E6%93%8D%E4%BD%9C-12"><span class="nav-number">0.3.2.</span> <span class="nav-text">HA相关维护操作 12</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%90%AF-%E5%85%B3%E9%97%AD%E4%B8%B4%E6%97%B6%E4%BD%BF%E7%94%A8%E4%BB%8E%E8%8A%82%E7%82%B9%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6"><span class="nav-number">0.4.</span> <span class="nav-text">开启&#x2F;关闭临时使用从节点…………………………………………………………………………………………………………….</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F-%E5%BC%80%E5%90%AF%E4%BB%8E%E8%8A%82%E7%82%B9%E4%B8%B4%E6%97%B6%E4%BD%BF%E7%94%A8%E5%90%8E%EF%BC%8C%E8%AF%B7%E7%A1%AE%E4%BF%9D%E4%B8%8D%E8%A6%81%E5%9C%A8%E4%B8%BB%E8%8A%82%E7%82%B9%E4%B8%8A%E8%BF%9B%E8%A1%8C%E4%BB%BB%E4%BD%95%E6%93%8D%E4%BD%9C%EF%BC%8C%E5%90%A6%E5%88%99%E4%B8%B4%E6%97%B6%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B%E4%B8%AD%E6%9F%90%E4%B8%AA%E8%8A%82%E7%82%B9%E4%B8%8A%E6%89%A7%E8%A1%8C"><span class="nav-number">0.4.0.1.</span> <span class="nav-text">注意: 开启从节点临时使用后，请确保不要在主节点上进行任何操作，否则临时使用过程中某个节点上执行</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9A%84%E5%90%84%E7%A7%8D%E6%93%8D%E4%BD%9C%E5%8F%AF%E8%83%BD%E8%A2%AB%E8%A6%86%E7%9B%96%E3%80%82%E7%BD%91%E7%BB%9C%E6%81%A2%E5%A4%8D%E5%90%8E%EF%BC%8C%E5%B0%86%E6%A0%B9%E6%8D%AE%E5%90%84%E8%8A%82%E7%82%B9%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%86%99%E5%85%A5%E6%97%B6%E9%97%B4%E5%86%B3%E5%AE%9A%E4%B8%BB%E8%8A%82%E7%82%B9%EF%BC%8C%E4%BC%9A%E4%BF%9D%E7%95%99%E6%95%B0%E6%8D%AE%E5%BA%93%E5%86%99%E5%85%A5%E6%97%B6"><span class="nav-number">0.4.0.2.</span> <span class="nav-text">的各种操作可能被覆盖。网络恢复后，将根据各节点数据库的写入时间决定主节点，会保留数据库写入时</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%97%B4%E8%BE%83%E6%96%B0%E7%9A%84%E8%8A%82%E7%82%B9%E4%B8%BA%E4%B8%BB%E8%8A%82%E7%82%B9%EF%BC%8C%E5%B0%86%E5%8F%A6%E4%B8%80%E8%8A%82%E7%82%B9%E9%99%8D%E7%BA%A7%E4%B8%BA%E4%BB%8E%E8%8A%82%E7%82%B9%EF%BC%8C%E5%B9%B6%E5%B0%86%E6%96%B0%E7%9A%84%E4%B8%BB%E8%8A%82%E7%82%B9%E7%9A%84%E6%95%B0%E6%8D%AE%E8%87%AA%E5%8A%A8%E8%A6%86%E7%9B%96%E5%88%B0%E6%96%B0%E7%9A%84%E4%BB%8E%E8%8A%82%E7%82%B9%E3%80%82"><span class="nav-number">0.4.0.3.</span> <span class="nav-text">间较新的节点为主节点，将另一节点降级为从节点，并将新的主节点的数据自动覆盖到新的从节点。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HA%E7%9B%B8%E5%85%B3%E7%BB%B4%E6%8A%A4%E6%93%8D%E4%BD%9C-13"><span class="nav-number">0.4.1.</span> <span class="nav-text">HA相关维护操作 13</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BC%80%E5%90%AF%E4%B8%B4%E6%97%B6%E4%BD%BF%E7%94%A8%E6%A8%A1%E5%BC%8F%E5%90%8E%EF%BC%8C%E5%A6%82%E7%BD%91%E7%BB%9C%E6%81%A2%E5%A4%8D%EF%BC%8C%E5%88%99%E4%B8%B4%E6%97%B6%E4%BD%BF%E7%94%A8%E6%A8%A1%E5%BC%8F%E5%B0%86%E8%87%AA%E5%8A%A8%E5%85%B3%E9%97%AD%E3%80%82%E6%96%AD%E7%BD%91%E8%BF%87%E7%A8%8B%E4%B8%AD%E5%A6%82%E4%B8%BB%E8%8A%82%E7%82%B9%E6%9C%AA%E8%BF%9B%E8%A1%8C%E4%BB%BB%E4%BD%95%E6%93%8D%E4%BD%9C%EF%BC%8C%E7%8B%AC%E7%AB%8B%E4%BD%BF%E7%94%A8"><span class="nav-number">0.4.1.1.</span> <span class="nav-text">开启临时使用模式后，如网络恢复，则临时使用模式将自动关闭。断网过程中如主节点未进行任何操作，独立使用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9A%84%E4%BB%8E%E8%8A%82%E7%82%B9%E5%B0%86%E4%BD%9C%E4%B8%BA%E6%96%B0%E7%9A%84%E4%B8%BB%E8%8A%82%E7%82%B9%EF%BC%8C%E8%80%8C%E5%8E%9F%E6%9D%A5%E7%9A%84%E4%B8%BB%E8%8A%82%E7%82%B9%E6%95%B0%E6%8D%AE%E5%B0%86%E8%A2%AB%E8%A6%86%E7%9B%96%E5%B9%B6%E4%BD%9C%E4%B8%BA%E6%96%B0%E7%9A%84%E4%BB%8E%E8%8A%82%E7%82%B9%E3%80%82"><span class="nav-number">0.4.1.2.</span> <span class="nav-text">的从节点将作为新的主节点，而原来的主节点数据将被覆盖并作为新的从节点。</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E5%8A%A8%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6"><span class="nav-number">0.5.</span> <span class="nav-text">手动同步数据………………………………………………………………………………………………………………………………</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BD%93%E4%BB%8E%E8%8A%82%E7%82%B9%E6%96%AD%E7%BD%91%E5%B9%B6%E6%81%A2%E5%A4%8D%E5%90%8E%EF%BC%8C%E4%B8%BB%E8%8A%82%E7%82%B9%E5%92%8C%E4%BB%8E%E8%8A%82%E7%82%B9%E4%B9%8B%E9%97%B4%E7%9A%84%E6%95%B0%E6%8D%AE%E5%B0%86%E4%BC%9A%E8%BF%9B%E8%A1%8C%E8%87%AA%E5%8A%A8%E5%90%8C%E6%AD%A5%E3%80%82"><span class="nav-number">0.5.0.1.</span> <span class="nav-text">当从节点断网并恢复后，主节点和从节点之间的数据将会进行自动同步。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%86%E5%BD%93%E4%B8%BB%E4%BB%8E%E8%8A%82%E7%82%B9%E9%95%BF%E6%97%B6%E9%97%B4%E6%9C%AA%E8%BF%9B%E8%A1%8C%E5%90%8C%E6%AD%A5%EF%BC%8C%E4%B8%94%E5%90%8C%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E6%95%B0%E6%8D%AE%E5%BA%93%E5%86%99%E6%93%8D%E4%BD%9C%E6%97%B6%EF%BC%8C%E5%B0%86%E6%97%A0%E6%B3%95%E8%BF%9B%E8%A1%8C%E8%87%AA%E5%8A%A8%E5%90%8C%E6%AD%A5%E3%80%82"><span class="nav-number">0.5.0.2.</span> <span class="nav-text">但当主从节点长时间未进行同步，且同时发生了数据库写操作时，将无法进行自动同步。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9C%A8-%E7%B3%BB%E7%BB%9F%E8%AE%BE%E7%BD%AE-gt-%E7%B3%BB%E7%BB%9F-gt-%E9%83%A8%E7%BD%B2%E7%AE%A1%E7%90%86-%E7%9A%84-%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86-%E7%95%8C%E9%9D%A2%E4%B8%AD%EF%BC%8C%E4%BB%8E%E8%8A%82%E7%82%B9%E7%8A%B6%E6%80%81%E4%B9%9F%E5%B0%86%E6%98%BE%E7%A4%BA%E4%B8%BA-%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%82%E5%B8%B8-%E3%80%82"><span class="nav-number">0.5.0.3.</span> <span class="nav-text">在 系统设置 &gt; 系统 &gt; 部署管理 的 集群管理 界面中，从节点状态也将显示为 同步数据库异常 。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%AD%A4%E6%97%B6%EF%BC%8C%E9%9C%80%E8%A6%81%E6%89%A7%E8%A1%8C%E6%89%8B%E5%8A%A8%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C%EF%BC%8C%E4%BD%BF%E4%B8%BB%E8%8A%82%E7%82%B9%E5%90%91%E4%BB%8E%E8%8A%82%E7%82%B9%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%EF%BC%8C%E4%BB%A5%E4%BF%9D%E8%AF%81%E4%B8%BB%E4%BB%8E%E8%8A%82%E7%82%B9%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%80%E8%87%B4%E6%80%A7%E3%80%82"><span class="nav-number">0.5.0.4.</span> <span class="nav-text">此时，需要执行手动同步数据操作，使主节点向从节点同步数据，以保证主从节点的数据库一致性。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E9%87%8D%E6%96%B0%E5%90%8C%E6%AD%A5%E5%90%8E%EF%BC%8C%E8%AF%B7%E7%AD%89%E5%BE%85%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8C%E6%AD%A5%E5%AE%8C%E6%AF%95%E5%B9%B6%E5%88%B7%E6%96%B0%E9%A1%B5%E9%9D%A2%E3%80%82%E5%90%8C%E6%AD%A5%E5%AE%8C%E6%88%90%E5%90%8E%EF%BC%8C%E9%A1%B5%E9%9D%A2%E5%91%8A%E8%AD%A6%E6%B6%88%E5%A4%B1%E3%80%82"><span class="nav-number">0.5.0.5.</span> <span class="nav-text">执行重新同步后，请等待数据库同步完毕并刷新页面。同步完成后，页面告警消失。</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E5%8A%A8%E6%8E%A8%E9%80%81%E5%AE%A1%E8%AE%A1%E6%95%B0%E6%8D%AE%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6"><span class="nav-number">0.6.</span> <span class="nav-text">手动推送审计数据………………………………………………………………………………………………………………………..</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HA%E7%9B%B8%E5%85%B3%E7%BB%B4%E6%8A%A4%E6%93%8D%E4%BD%9C-14"><span class="nav-number">0.6.1.</span> <span class="nav-text">HA相关维护操作 14</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E7%99%BB%E5%BD%95%E5%88%B0%E4%B8%BB%E8%8A%82%E7%82%B9%E7%9A%84%E6%8E%A7%E5%88%B6%E5%8F%B0%E3%80%82"><span class="nav-number">0.6.1.1.</span> <span class="nav-text">1. 登录到主节点的控制台。</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E5%8A%A8%E5%A4%87%E4%BB%BDPostgres%E6%95%B0%E6%8D%AE%E5%BA%93%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6"><span class="nav-number">0.7.</span> <span class="nav-text">手动备份Postgres数据库………………………………………………………………………………………………………………</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%87%E4%BB%BD%E5%92%8C%E5%AF%BC%E5%85%A5%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6"><span class="nav-number">0.8.</span> <span class="nav-text">备份和导入系统配置…………………………………………………………………………………………………………………….</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HA%E7%9B%B8%E5%85%B3%E7%BB%B4%E6%8A%A4%E6%93%8D%E4%BD%9C-15"><span class="nav-number">0.8.1.</span> <span class="nav-text">HA相关维护操作 15</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HA%E7%9B%B8%E5%85%B3%E7%BB%B4%E6%8A%A4%E6%93%8D%E4%BD%9C-16"><span class="nav-number">0.8.2.</span> <span class="nav-text">HA相关维护操作 16</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%86%E9%99%A4HA%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6"><span class="nav-number">0.9.</span> <span class="nav-text">拆除HA………………………………………………………………………………………………………………………………………</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HA%E7%9B%B8%E5%85%B3%E7%BB%B4%E6%8A%A4%E6%93%8D%E4%BD%9C-17"><span class="nav-number">0.9.1.</span> <span class="nav-text">HA相关维护操作 17</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%AD%89%E5%BE%85RIS%E6%89%A7%E8%A1%8C%E6%93%8D%E4%BD%9C%EF%BC%8C%E5%AE%8C%E6%88%90%E5%90%8E%E5%88%B7%E6%96%B0%E9%A1%B5%E9%9D%A2%EF%BC%8C%E5%B0%86%E7%9C%8B%E5%88%B0HA%E5%B7%B2%E6%8B%86%E9%99%A4%E3%80%82%E6%8B%86%E9%99%A4%E5%90%8E%E5%90%84%E8%8A%82%E7%82%B9%E5%8F%AF%E4%BB%A5%E7%BB%A7%E7%BB%AD%E4%BD%9C%E4%B8%BA%E5%8D%95%E6%9C%BA%E4%BD%BF%E7%94%A8%E3%80%82"><span class="nav-number">0.9.1.1.</span> <span class="nav-text">等待RIS执行操作，完成后刷新页面，将看到HA已拆除。拆除后各节点可以继续作为单机使用。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HA%E7%9B%B8%E5%85%B3%E7%BB%B4%E6%8A%A4%E6%93%8D%E4%BD%9C-18"><span class="nav-number">0.9.2.</span> <span class="nav-text">HA相关维护操作 18</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-1"><span class="nav-number"></span> <span class="nav-text">4</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%99%BB%E5%BD%95RIS%E7%9A%84Console%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6"><span class="nav-number">0.1.</span> <span class="nav-text">登录RIS的Console………………………………………………………………………………………………………………………</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#19"><span class="nav-number">0.1.1.</span> <span class="nav-text">19</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#SSH%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95-%E4%BF%AE%E6%94%B9%E5%AF%86%E9%92%A5%E8%AF%B7%E5%8F%82%E8%80%83%EF%BC%9A"><span class="nav-number">0.1.1.1.</span> <span class="nav-text">SSH远程登录 修改密钥请参考：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E2%80%A2-IPMI%E7%99%BB%E5%BD%95"><span class="nav-number">0.1.1.2.</span> <span class="nav-text">• IPMI登录</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E2%80%A2-%E6%98%BE%E7%A4%BA%E5%99%A8%E7%9B%B4%E8%BF%9E"><span class="nav-number">0.1.1.3.</span> <span class="nav-text">• 显示器直连</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81%E8%AF%B7%E5%8F%82%E8%80%83%EF%BC%9A"><span class="nav-number">0.1.1.4.</span> <span class="nav-text">修改密码请参考：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E6%98%BE%E7%A4%BA%E5%99%A8%E7%9B%B4%E8%BF%9E%E7%99%BB%E5%BD%95Console%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6"><span class="nav-number">0.1.2.</span> <span class="nav-text">通过显示器直连登录Console……………………………………………………………………………………………….</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E2%80%A2-%E5%AF%B9%E4%BA%8E%E7%A1%AC%E4%BB%B6%E9%83%A8%E7%BD%B2%E7%9A%84RIS%EF%BC%9A%E8%AF%B7%E5%87%86%E5%A4%87%E4%B8%80%E5%8F%B0%E6%94%AF%E6%8C%81VGA%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%98%BE%E7%A4%BA%E5%99%A8%E3%80%81VGA%E8%BF%9E%E6%8E%A5%E7%BA%BF%E3%80%81%E9%94%AE%E7%9B%98%EF%BC%8C%E5%B0%86%E6%98%BE%E7%A4%BA%E5%99%A8%E5%92%8C%E9%94%AE%E7%9B%98%E7%9B%B4%E6%8E%A5%E8%BF%9E%E6%8E%A5%E5%88%B0%E8%AE%BE%E5%A4%87"><span class="nav-number">0.1.2.1.</span> <span class="nav-text">• 对于硬件部署的RIS：请准备一台支持VGA接口的显示器、VGA连接线、键盘，将显示器和键盘直接连接到设备</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%8A%E7%99%BB%E5%BD%95%E8%BF%9B%E8%A1%8C%E6%93%8D%E4%BD%9C%E3%80%82"><span class="nav-number">0.1.2.2.</span> <span class="nav-text">上登录进行操作。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E2%80%A2-%E5%AF%B9%E4%BA%8E%E8%99%9A%E6%8B%9F%E5%8C%96%E9%83%A8%E7%BD%B2%E7%9A%84RIS%EF%BC%9A%E5%8F%AF%E4%BB%A5%E7%9B%B4%E6%8E%A5%E9%80%9A%E8%BF%87%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%8E%A7%E5%88%B6%E5%8F%B0%E8%BF%9B%E8%A1%8C%E6%93%8D%E4%BD%9C%E3%80%82"><span class="nav-number">0.1.2.3.</span> <span class="nav-text">• 对于虚拟化部署的RIS：可以直接通过虚拟机控制台进行操作。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E9%80%9A%E8%BF%87%E6%98%BE%E7%A4%BA%E5%99%A8-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%8E%A7%E5%88%B6%E5%8F%B0%E8%AE%BF%E9%97%AERIS%E3%80%82"><span class="nav-number">0.1.2.4.</span> <span class="nav-text">1. 通过显示器&#x2F;虚拟机控制台访问RIS。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%84%E5%BD%95-20"><span class="nav-number">0.1.3.</span> <span class="nav-text">附录 20</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E8%BF%87SSH%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95Console%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6"><span class="nav-number">0.1.4.</span> <span class="nav-text">通过SSH远程登录Console………………………………………………………………………………………………….</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%84%E5%BD%95-21"><span class="nav-number">0.1.5.</span> <span class="nav-text">附录 21</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E2%80%A2-%E4%B8%BB%E6%9C%BA-%EF%BC%9ARIS%E7%9A%84IP%E5%9C%B0%E5%9D%80"><span class="nav-number">0.1.5.1.</span> <span class="nav-text">• 主机 ：RIS的IP地址</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E2%80%A2-%E7%AB%AF%E5%8F%A3%E5%8F%B7-%EF%BC%9A8022"><span class="nav-number">0.1.5.2.</span> <span class="nav-text">• 端口号 ：8022</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E5%9C%A8-%E8%BF%9E%E6%8E%A5-gt-%E7%94%A8%E6%88%B7%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81-%E8%8F%9C%E5%8D%95%EF%BC%8C%E9%85%8D%E7%BD%AE%E4%BB%A5%E4%B8%8B%E5%B1%9E%E6%80%A7%EF%BC%8C%E5%B9%B6%E5%8D%95%E5%87%BB-%E8%BF%9E%E6%8E%A5-%E3%80%82"><span class="nav-number">0.1.5.3.</span> <span class="nav-text">3. 在 连接 &gt; 用户身份验证 菜单，配置以下属性，并单击 连接 。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%84%E5%BD%95-22"><span class="nav-number">0.1.6.</span> <span class="nav-text">附录 22</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%84%E5%BD%95-23"><span class="nav-number">0.1.7.</span> <span class="nav-text">附录 23</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E8%BF%87IPMI%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95Console%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6"><span class="nav-number">0.1.8.</span> <span class="nav-text">通过IPMI远程登录Console………………………………………………………………………………………………….</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E-ADMIN%E7%94%A8%E6%88%B7%E7%9A%84%E9%BB%98%E8%AE%A4%E5%AF%86%E7%A0%81%E4%B8%BAADMIN%E3%80%82"><span class="nav-number">0.1.8.1.</span> <span class="nav-text">说明: ADMIN用户的默认密码为ADMIN。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%84%E5%BD%95-24"><span class="nav-number">0.1.9.</span> <span class="nav-text">附录 24</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%84%E5%BD%95-25"><span class="nav-number">0.1.10.</span> <span class="nav-text">附录 25</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%84%E5%BD%95-26"><span class="nav-number">0.1.11.</span> <span class="nav-text">附录 26</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HA%E7%9B%B8%E5%85%B3%E6%97%A5%E5%BF%97%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6%E2%80%A6"><span class="nav-number">0.2.</span> <span class="nav-text">HA相关日志………………………………………………………………………………………………………………………………..</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9C%A8%E5%AE%9A%E4%BD%8DHA%E7%9A%84%E9%97%AE%E9%A2%98%E6%97%B6%EF%BC%8C%E9%99%A4%E4%BA%86%E8%BF%9B%E8%A1%8C%E9%AA%8C%E8%AF%81HA%E7%8A%B6%E6%80%81%E4%B9%8B%E5%A4%96%EF%BC%8C%E4%B9%9F%E5%8F%AF%E4%BB%A5%E9%80%9A%E8%BF%87%E6%9F%A5%E7%9C%8B%E7%9B%B8%E5%85%B3%E6%97%A5%E5%BF%97%E6%9D%A5%E8%BF%9B%E8%A1%8C%E9%97%AE%E9%A2%98%E7%9A%84%E5%AE%9A%E4%BD%8D%E3%80%82%E5%8F%AF%E4%BB%A5%E6%90%9C%E9%9B%86%E4%BB%A5%E4%B8%8B%E6%97%A5%E5%BF%97"><span class="nav-number">0.2.0.1.</span> <span class="nav-text">在定位HA的问题时，除了进行验证HA状态之外，也可以通过查看相关日志来进行问题的定位。可以搜集以下日志</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E9%80%81%E7%BB%99%E9%BD%90%E6%B2%BB%E7%A7%91%E6%8A%80%E6%8A%80%E6%9C%AF%E6%94%AF%E6%8C%81%E8%BF%9B%E8%A1%8C%E9%97%AE%E9%A2%98%E7%9A%84%E5%AE%9A%E4%BD%8D%E5%88%86%E6%9E%90%E4%B8%8E%E5%A4%84%E7%90%86%E3%80%82"><span class="nav-number">0.2.0.2.</span> <span class="nav-text">并发送给齐治科技技术支持进行问题的定位分析与处理。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A8%A1%E5%9D%97%E5%90%8D%E7%A7%B0-%E6%97%A5%E5%BF%97"><span class="nav-number">0.2.0.3.</span> <span class="nav-text">模块名称 日志</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%84%E5%BD%95-27"><span class="nav-number">0.2.1.</span> <span class="nav-text">附录 27</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Marlboro"
+      src="/images/tom.jpg">
+  <p class="site-author-name" itemprop="name">Marlboro</p>
+  <div class="site-description" itemprop="description">公无渡河</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/mojinhui33" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;mojinhui33" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/6377511949" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;6377511949" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://plus.google.com/" title="Google → https:&#x2F;&#x2F;plus.google.com&#x2F;" rel="noopener" target="_blank"><i class="fab fa-google fa-fw"></i>Google</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/ponely1" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;ponely1" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Marlboro</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
