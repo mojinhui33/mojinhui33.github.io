@@ -1,0 +1,65 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link href="../../css/docs.css" type="text/css" rel="stylesheet"/>
+<link href="../../css/prettify.css" type="text/css" rel="stylesheet"/>
+</head>
+<body>
+<div class="g-unit" id="doc-content">
+  <div id="jd-header" class="guide-header">
+    <span class="crumb">&nbsp;</span>
+    <h1>通用约定及约束说明</h1>
+  </div>
+  <div id="jd-content">
+    <p>本节对 OPC-RS 接口设计的一些通用处理方式进行说明，供开发人员阅读 API 文档过程中进行参考。</p>
+    <dl>
+    	<dt><b>OPC-RS 接口对应的 HTTP 方法类型</b></dt>
+    	<dd>OPC-RS 接口使用的 HTTP 方法遵循 RESTful Web Services 的建议，即分别使用 GET/POST/PUT/DELETE 执行 OPC 资源的查询（读取）、增加、修改（配置）和删除操作。<br>此外，各 URI 同时还支持 OPTIONS 方法，用于查询该 URI 支持的方法类型。<br>（HEAD 方法也同样支持，其类似 GET，但只返回状态码和消息头，不返回消息体，故用处不大。）</dd>
+    	<dt><b>OPC-RS 支持的内容类型和字符编码</b></dt>
+    	<dd>除非有特殊说明，OPC-RS 缺省支持 XML(application/xml) 和 JSON(application/json) 两种内容类型，可以在客户端侧 HTTP 请求/回应消息中指定这些类型（accept/contentType）。<br>除此之外，个别接口支持其他内容类型，请参考具体的 API 文档描述。<br>OPC-RS 交互报文中所有消息体均采用 UTF-8 编码。</dd>
+    	<dt><b>OPC-RS 接口返回值对应的 HTTP 状态码（Status Code）</b></dt>
+    	<dd>OPC-RS 接口返回值同样遵循 RESTful Web Services 的建议，不同操作可能返回的 HTTP 状态码如下：
+    		<ul>
+    			<li>多条件批量查询（GET）操作：成功－200(OK)。</li>
+    			<li>单对象查询（GET）操作：成功－200(OK)；对象不存在－204(No Content)。</li>
+    			<li>增加（POST）操作：成功且返回对象链接－201(Created)；成功（不返回任何内容）－204(No Content)。</li>
+    			<li>修改（PUT）操作：成功（不返回任何内容）－204(No Content)；待修改对象不存在导致失败－404(Not Found)。</li>
+    			<li>删除（DELETE）操作：成功（不返回任何内容）－204(No Content)；待删除对象不存在（已经被删除）－410(Gone)。</li>
+    		</ul>
+    	  <br>执行上述操作过程中，可能出现由于业务约束而导致的错误。例如当某个操作员当前状态为“在线”时，不允许删除。此时返回 HTTP 状态码为：409(Conflict)；同时在消息头中返回两个属性：Error-Code 和 Error-Message，分别表示错误码与错误描述。请参考<a href="errorCodes.html">错误码说明</a>。
+    		<br><br>此外，与业务无关的常见错误对应的 HTTP 状态码及错误处理方法如下（该类错误通常由于开发人员编码错误或 OPC 服务器状态异常导致）：</p>
+    		<ul>
+    			<li>URI 指定的服务不存在：404(Not Found)。查看 API 接口文档检查 URI 是否写错了。注意：该错误返回报文中包含 HTML 格式的消息体；当 GET/PUT 操作在对象不存在时，状态码也是 404(Not Found)，返回的报文中不包含任何消息体。</li>
+    			<li>不支持的方法类型：405(Method Not Allowed)。查看 API 文档，或执行 OPTIONS 方法查看支持哪些方法。</li>
+    			<li>不支持的内容类型：406(Not Acceptable)。查看 API 文档，设置合法的内容类型（accept消息头）。</li>
+    			<li>请求 URI 携带的参数不合法（如类型无法转换等）：400(Bad Request)。查看 API 文档中对各参数的要求。</li>
+    			<li>请求未经过安全认证：401(Unauthorized)。参考“身份认证和权限控制”一节及样例代码，设置合法的认证参数。</li>
+    			<li>该用户不允许执行该操作（未经授权）：403(Forbidden)。</li>
+    			<li>OPC 服务器错误：500(Internal Server Error)。检查 OPC 服务是否正常工作（Web 页面等是否能正常访问等）；或联系公司技术支持工程师。</li>
+    		</ul>
+      </dd>
+    	<dt><b>查询操作支持的通配符</b></dt>
+    	<dd>对于各类资源的多条件批量查询接口，某些字符串类型的查询条件支持通配符。通配符包括“*”和“?”，分别表示“任意多个字符”和“一个字符”。</dd>
+    	<dt><b>数字类型范围说明</b></dt>
+    	<dd>OPC-RS 支持整数（int）、长整数（long）、浮点数（float）和双精度（double）数字类型。各类型的范围如下：
+    		<ul>
+    			<li>整数（int）：-2147483648 [0x80000000] 至 2147483647 [0x7fffffff]。</li>
+    			<li>长整数（long）：-9223372036854775808 [0x8000000000000000] 至 9223372036854775807 [0x7fffffffffffffff]。</li>
+    			<li>浮点数（float）：1.4E-45 至 3.4028235E38。</li>
+    			<li>双精度数（double）：4.9E-324 至 1.7976931348623157E308。</li>
+    		</ul>
+    			<br>
+    			注意事项：对于不需要传值的字段不要传递空元素。
+    	</dd>
+    	<dt><b>多条件批量查询（列表）的结果集说明</b></dt>
+    	<dd>多条件批量查询（列表）均支持分页条件（start/size），一次查询缺省返回 10 条记录，最多返回 1000 条记录。
+    		<br>返回结果集封装在&lt;list&gt;...&lt;/list&gt;中，除了本次操作的结果列表外，同时以 Atom Link 的格式给出“上一页（&lt;link&gt; rel="previous" href="..."/&gt;）”和“下一页（&lt;link&gt; rel="next" href="..."/&gt;）”资源 URI。
+    		<br>集合中的每个实体都以 Atom Link 的格式给出其单实体资源 URI（&lt;link&gt; rel="self" href="..."/&gt;）。
+    		<br>如果total参数值为TRUE，则返回数据没有消息体，消息头的 Total 属性返回符合条件的总记录数。如果total属性为FALSE，则返回的数据为符合条件的结果。
+    		<br>如果exact参数值为TRUE,则返回通过IP地址查询的结果集。此时total参数值为TRUE时，返回的总记录数也是通过IP地址精确查找的总记录数。
+    		</dd>
+    </dl>
+  </div>
+</div>
+</body>
+</html>

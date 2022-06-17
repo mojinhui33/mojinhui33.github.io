@@ -1,0 +1,175 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link href="../../css/docs.css" type="text/css" rel="stylesheet"/>
+<link href="../../css/prettify.css" type="text/css" rel="stylesheet"/>
+<script src="../../js/prettify.js" type="text/javascript"></script>
+</head>
+<body onload="prettyPrint()">
+<div class="g-unit" id="doc-content">
+  <div id="jd-header" class="guide-header">
+    <span class="crumb">&nbsp;</span>
+    <h1>第一个客户端程序</h1>
+  </div>
+  <div id="jd-content">
+    <p>本节将引导您快速访问 本系统提供的Restful Web Services服务，并构建第一个客户端程序。</p>
+    <p>本节教程使用 Java 语言访问Restful Web Services服务，假设您已经熟悉 Java 语言和 Eclipse 开发环境。</p>
+    <dl>
+    	<dt><b>准备工作</b></dt>
+		  <p>开始该教程前，请确认您已经做好如下准备工作：
+		  <ol>
+		  	<li>安装并部署OPC，运行本系统；</li>
+		  	<li><a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">下载</a>并安装 JDK 6 或 JRE 6；</li>
+		  	<li><a href="http://download.eclipse.org/eclipse/downloads/">下载</a>并安装 Eclipse 3.6 或后续版本；</li>
+		  	<li><a href="http://hc.apache.org/downloads.cgi">下载</a> Apache HttpClient 4.1 或后续版本，并解压缩到本地；</li>
+		  </ol></p>
+
+    	<dt><b>创建工程</b></dt>
+		  <p>打开 Eclipse 集成开发环境，并创建一个新的工程
+		  <ol>
+		  	<li>选择菜单 File -&gt; New -&gt; Java Project；</li>
+		  	<li>在 Project Name 输入框中输入项目名称，如“MyRestClient”，然后点击“Next”按钮；</li>
+		  	<li>选择 Libraries 选项卡，然后点击“Add External JARs...”按钮，找到 Apache HttpClient 解压缩后的“httpcore-4.1.jar”、“httpclient-4.1.jar”、“commons-logging-1.1.1.jar”文件选中并加入到工程中；</li>
+		  	<li>点击“Finish”按钮，完成工程创建。</li>
+		  </ol></p>
+
+    	<dt><b>编写客户端代码</b></dt>
+		  <p>在新创建工程上激活右键菜单，选择 New -&gt; Class。
+		  <br>在向导对话框中输入包名（如 com.mycompany.rest）和类名（如 MyClient），并勾选创建 main 方法，然后点击“Finish”按钮。
+		  <br>在新生成的类中，编写如下代码：<p>
+		  <div class="source"><pre class="prettyprint lang-java">
+/*
+ * Copyright (c) 2015-2016, Zhejiang QiZhi Technologies Co., Ltd.
+ */
+package com.mycompany.rest;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
+public class MyRestClient {
+
+    TrustAnyTrustManager trustAnyTrustManager = new TrustAnyTrustManager();
+
+    public static void main(String[] args) throws Exception {
+        MyRestClient client = new MyRestClient();
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, new TrustManager[] {client.trustAnyTrustManager}, null);
+        SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
+        HttpHost host = new HttpHost(opc_host, 443, "https");
+        HttpClient httpClient = HttpClients.custom().disableCookieManagement().setSSLSocketFactory(sslConnectionSocketFactory)
+            .setMaxConnPerRoute(50).setDefaultRequestConfig(
+                RequestConfig.custom().setConnectionRequestTimeout(60000).setConnectTimeout(60000).setSocketTimeout(60000).build())
+            .build();
+        // get authenticate
+        HttpPost post = new HttpPost("/shterm/api/authenticate");
+        post.setHeader("accept", "application/json");
+        post.setHeader("Content-Type", "application/json;charset=UTF-8");
+        String result = "{\"username\":\"admin\",\"password\": \"admin\"}";
+        HttpEntity entity = new StringEntity(result, "UTF-8");
+        post.setEntity(entity);
+        HttpResponse resp = httpClient.execute(host, post);
+        String token = "";
+        System.out.println("token response code : " + resp.getStatusLine().getStatusCode());
+        if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            String resultStr = EntityUtils.toString(resp.getEntity());
+            System.out.println("token response is : " + resultStr);
+            token = resultStr.substring(18, resultStr.length() - 2);
+            System.out.println("token is : " + token);
+        }
+
+        // get user by id
+        HttpGet get = new HttpGet("/shterm/api/user/1");
+        get.setHeader("accept", "application/json");
+        get.setHeader("Content-Type", "application/json;charset=UTF-8");
+        get.setHeader("st-auth-token", token);
+        HttpResponse getResp = httpClient.execute(host, get);
+        System.out.println("get response code : " + getResp.getStatusLine().getStatusCode());
+        if (getResp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            String resultStr = EntityUtils.toString(getResp.getEntity());
+            System.out.println("get response is : " + resultStr);
+        }
+    }
+
+    public class TrustAnySSLSocketFactory extends SSLSocketFactory {
+        private SSLSocketFactory factory;
+        public TrustAnySSLSocketFactory() {
+            try {
+                SSLContext sc = SSLContext.getInstance("TLS");
+                sc.init(null, new TrustManager[] {new TrustAnyTrustManager() }, null);
+                this.factory = sc.getSocketFactory();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        @Override
+        public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
+            return this.factory.createSocket();
+        }
+        @Override
+        public String[] getDefaultCipherSuites() {
+            return this.factory.getDefaultCipherSuites();
+        }
+        @Override
+        public String[] getSupportedCipherSuites() {
+            return this.factory.getSupportedCipherSuites();
+        }
+        @Override
+        public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+            return this.factory.createSocket(host, port);
+        }
+        @Override
+        public Socket createSocket(InetAddress host, int port) throws IOException {
+            return this.factory.createSocket(host, port);
+        }
+        @Override
+        public Socket createSocket(String host, int port, InetAddress localHost, int localPort)
+                throws IOException, UnknownHostException {
+            return this.factory.createSocket(host, port, localHost, localPort);
+        }
+        @Override
+        public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException {
+            return this.factory.createSocket(address, port, localAddress, localPort);
+        }
+    }
+
+    public class TrustAnyTrustManager implements X509TrustManager {
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+        }
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+        }
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return new X509Certificate[0];
+        }
+    }
+}</pre></div>
+  	  <p>代码中“opc_host”和“443”分别是 OPC 服务器地址和端口；两个“admin”分别是登录 OPC 的用户名和密码。</p>
+        <dt><b>运行并查看结果</b></dt>
+        <p>选择菜单 Run -&gt; Run（或使用快捷键 Ctrl+F11）运行上述代码，Eclipse 的控制台（Console）中将看到结果输出。</p>
+    </dl>
+  </div>
+</div>
+</body>
+</html>

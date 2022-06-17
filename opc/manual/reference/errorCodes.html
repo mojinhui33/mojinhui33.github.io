@@ -1,0 +1,56 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link href="../../css/docs.css" type="text/css" rel="stylesheet"/>
+<link href="../../css/prettify.css" type="text/css" rel="stylesheet"/>
+</head>
+<body>
+<div class="g-unit" id="doc-content">
+  <div id="jd-header" class="guide-header">
+    <span class="crumb">&nbsp;</span>
+    <h1>错误码说明</h1>
+  </div>
+  <div id="jd-content">
+    <p>OPC-RS 接口返回值对应的 HTTP 状态码（Status Code）</p>
+    <p>OPC-RS 接口返回值同样遵循 RESTful Web Services 的建议，不同操作可能返回的 HTTP 状态码如下：</p>
+    <ul>
+        <li>多条件批量查询（GET）操作：成功－200(OK)。</li>
+        <li>单对象查询（GET）操作：成功－200(OK)；对象不存在－404(Not Found)。</li>
+        <li>增加（POST）操作：成功且返回对象链接－201(Created)；成功（不返回任何内容）－204(No Content)。对某些特殊操作（如登录），可以返回 200(OK)，同时在消息体中返回响应信息（如认证成功的 Token）。</li>
+        <li>修改（PUT）操作：成功（不返回任何内容）－204(No Content)；待修改对象不存在导致失败－404(Not Found)。</li>
+        <li>删除（DELETE）操作：成功（不返回任何内容）－204(No Content)；待删除对象不存在（已经被删除）－410(Gone)。</li>
+    </ul>
+    <p>此外，与业务无关的常见错误对应的 HTTP 状态码及错误处理方法如下（该类错误通常由于开发人员编码错误或 OPC 服务器状态异常导致）：</p>
+    <ul>
+        <li>URI 指定的服务不存在：404(Not Found)。查看 API 接口文档检查 URI 是否写错了。注意：该错误返回报文中包含 HTML 格式的消息体；当 GET/PUT 操作在对象不存在时，状态码也是 404(Not Found)，返回的报文中不包含任何消息体。</li>
+        <li>不支持的方法类型：405(Method Not Allowed)。查看 API 文档，或执行 OPTIONS 方法查看支持哪些方法。</li>
+        <li>不支持的内容类型：406(Not Acceptable)。例如服务器只支持JSON格式的数据，但客户端提交了 XML 格式的数据（Content-Type）。查看 API 文档，设置合法的内容类型（content-type/accept消息头）。</li>
+        <li>请求 URI 携带的参数不合法（如类型无法转换，取值无效等）：400(Bad Request)。查看 API 文档中对各参数的要求。</li>
+        <li>请求未经过安全认证：401(Unauthorized)。未登录认证。先访问登录认证接口（/api/authentication），获取到 Token 后再重新执行。</li>
+        <li>该用户不允许执行该操作（未经授权）：403(Forbidden)。使用 API 的用户无权访问某个接口。</li>
+        <li>OPC 服务器错误：500(Internal Server Error)。检查 OPC 服务是否正常工作（Web 页面等是否能正常访问等）。</li>
+    </ul>
+    <p>一般情况下，服务器端对于400错误，在Rest Controller中需要构造如下实体返回客户端：</p>
+
+    <div class="source">
+        <pre class="prettyprint lang-java">
+        ResponseEntity.badRequest.body(ValidationErrors.create("user", "loginName", "duplicate", user.getLoginName(), null));
+        // ValidationError 第一个字段（objectName）为操作对象（实体）名。
+        // ValidationError 第二个字段（field）为实体类中的属性（通常映射到数据库中的某个列，同时与界面中的某个表单项对应）名，如果没有，可以为null。
+        // ValidationError 第三个字段（code）为错误码信息，用于区分不同的错误。常见值包括：Null（必须为Null）、NotNull（不能为Null）、Max（超过最大值）、Min（超过最小值）、Size（字符串长度不合法）、Pattern（不匹配正则表达式）、Duplicate（提交的内容已经存在、如用户名已经存在，重复了）等。
+        // ValidationError 第四个字段（rejectedValue）为错误的输入值。
+        // ValidationError 第五个字段（defaultMessage）为错误信息资源串，设置为null，一般情况下都是通过第三个字段错误码来判断显示不同的提示信息。
+        </pre>
+    </div>
+
+    <p>一般情况下，客户端收到400错误，回应结构为：</p>
+    <div class="source">
+      <pre class="prettyprint lang-json">
+      [{"code":"duplicate", "field":"loginName", "objectName":"user", "rejectedValue":"1", "defaultMessage":null}]
+      </pre>
+    </div>
+    <p>其中，code就是错误码，客户端可以根据错误码来显示不同的提示信息。  </p>
+  </div>
+</div>
+</body>
+</html>

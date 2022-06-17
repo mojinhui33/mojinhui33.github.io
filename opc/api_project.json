@@ -1,0 +1,50 @@
+{
+  "name": "OPC API 参考手册",
+  "version": "3.2.7",
+  "description": "欢迎使用齐治数据中心操作系统 API 参考手册。",
+  "title": "OPC API 参考手册",
+  "sampleUrl": "http://10.10.0.20/shterm",
+  "order": [
+    "Authenticate",
+    "postAuthenticate",
+    "deleteAuthenticate",
+    "Permission",
+    "User",
+    "UserGroup",
+    "Dev",
+    "servSys",
+    "servSys DevGroup",
+    "servSys accessRule",
+    "servSys access dev",
+    "servSys dev logintemplate",
+    "WorkSheet",
+    "WorksheetDraft",
+    "DeviceAccess",
+    "SessionAudit",
+    "EventAudit",
+    "Account",
+    "risk session check",
+    "risk cmd check",
+    "risk cmdruletemplate",
+    "SysParam",
+    "AuthType",
+    "role",
+    "UserExt",
+    "DevExt",
+    "WorkSpace",
+    "UserAccount"
+  ],
+  "template": {
+    "forceLanguage": "zh_cn",
+    "withCompare": "false",
+    "withGenerator": "false"
+  },
+  "defaultVersion": "0.0.0",
+  "apidoc": "0.3.0",
+  "generator": {
+    "name": "apidoc",
+    "time": "2019-07-12T09:33:24.926Z",
+    "url": "http://apidocjs.com",
+    "version": "0.17.6"
+  }
+}
